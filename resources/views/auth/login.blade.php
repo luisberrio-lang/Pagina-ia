@@ -1,0 +1,52 @@
+@extends('layouts.marketing')
+@section('title', 'Iniciar sesión · Pagina-IA')
+
+@section('content')
+<div class="mx-auto max-w-md glass rounded-3xl p-8">
+    <h2 class="text-2xl font-extrabold">Iniciar sesión</h2>
+    <p class="text-white/70 mt-2">Accede a tu cuenta para continuar.</p>
+
+    @if (session('status'))
+        <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">
+            <ul class="list-disc ml-5">
+                @foreach($errors->all() as $e) <li>{{ $e }}</li> @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form class="mt-6 space-y-4" method="POST" action="{{ route('login') }}">
+        @csrf
+
+        <div>
+            <label class="text-sm text-white/80">Email</label>
+            <input name="email" type="email" required autofocus
+                   value="{{ old('email') }}"
+                   class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+        </div>
+
+        <div>
+            <label class="text-sm text-white/80">Password</label>
+            <input name="password" type="password" required
+                   class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+        </div>
+
+        <label class="flex items-center gap-2 text-white/80">
+            <input type="checkbox" name="remember">
+            Recordarme
+        </label>
+
+        <button class="btn-primary w-full" type="submit">Entrar</button>
+
+        <div class="text-center text-white/70 text-sm">
+            ¿No tienes cuenta?
+            <a class="text-cyan-300 hover:underline" href="{{ route('register') }}">Crear cuenta</a>
+        </div>
+    </form>
+</div>
+@endsection

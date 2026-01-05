@@ -1,11 +1,76 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@layer base {
+  html { scroll-behavior: smooth; }
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@layer components {
+  /* Paneles SIN backdrop-blur para que el robot NO se vea borroso */
+  .glass {
+    @apply bg-slate-950/45 border border-white/10 shadow-xl;
+  }
+
+  .content-surface {
+    @apply rounded-3xl border border-white/10 bg-slate-950/40 shadow-2xl;
+  }
+
+  .btn-tech {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold
+           bg-white/10 border border-white/15 text-white
+           transition duration-200 hover:bg-white/15 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold
+           bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-cyan-400 text-slate-950
+           shadow-lg shadow-fuchsia-500/20 transition duration-200
+           hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .card-hover {
+    @apply transition duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/10;
+  }
+
+  .input-tech{
+    @apply mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white
+           placeholder:text-white/30 outline-none
+           focus:ring-2 focus:ring-cyan-400/40;
+  }
+}
+
+/* Robot 3D (centrado y grande) */
+.hero-robot{
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: min(900px, 80vw);
+  opacity: .70; /* más visible */
+  pointer-events: none;
+  user-select: none;
+
+  /* sin blur, solo sombras para que “resalte” */
+  filter:
+    drop-shadow(0 0 70px rgba(34,211,238,.22))
+    drop-shadow(0 0 140px rgba(168,85,247,.18))
+    drop-shadow(0 70px 140px rgba(0,0,0,.55));
+
+  animation: floaty 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes floaty{
+  0%,100%{ transform: translate(-50%, -50%) translate3d(0,0,0); }
+  50%{ transform: translate(-50%, -50%) translate3d(0,-14px,0); }
+}
+
+/* Responsive */
+@media (max-width: 768px){
+  .hero-robot{
+    top: 56%;
+    width: 560px;
+    opacity: .35;
+  }
 }
