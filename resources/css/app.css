@@ -4,6 +4,10 @@
 
 @layer base {
   html { scroll-behavior: smooth; }
+
+  /* ✅ Anti-desborde global (móvil) */
+  body { overflow-x: hidden; }
+  img, video, canvas, svg { max-width: 100%; height: auto; }
 }
 
 /* =========================
@@ -41,6 +45,27 @@
     @apply mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white
            placeholder:text-white/30 outline-none
            focus:ring-2 focus:ring-cyan-400/40;
+  }
+
+  /* ✅ Nav premium con íconos (si ya lo agregaste en el layout) */
+  .nav-item{
+    @apply inline-flex items-center gap-2 rounded-xl px-3 py-2 text-white/80
+           hover:text-cyan-200 hover:bg-white/5 transition;
+  }
+  .nav-ico{
+    @apply inline-flex h-5 w-5 items-center justify-center text-white/70 shrink-0;
+  }
+  .nav-item:hover .nav-ico{
+    @apply text-cyan-200;
+  }
+  .nav-ico svg{
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ✅ Botones dentro de cards (NO texto vertical) */
+  .card-cta{
+    @apply inline-flex items-center justify-center whitespace-nowrap;
   }
 }
 
@@ -81,9 +106,8 @@
 
 /* =========================
    NEÓN PREMIUM (solo borde + glow)
-   + fondo interno (degradado sutil)
+   ✅ IMPORTANTE: NO recortar contenido
    ========================= */
-
 .neon-frame{
   position: relative;
   border-radius: 1.5rem; /* 24px */
@@ -94,7 +118,8 @@
     0 0 26px rgba(34,211,238,0.12),
     0 0 60px rgba(168,85,247,0.10);
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-  overflow: hidden; /* ✅ evita que cualquier hijo se “salga” del borde */
+
+  overflow: visible; /* ✅ CLAVE: evita que botones se corten */
 }
 
 .neon-frame:hover{
@@ -106,9 +131,11 @@
     0 0 90px rgba(168,85,247,0.14);
 }
 
-/* Fondo interno: azul + toque dorado suave */
+/* Fondo interno: azul + toque dorado suave
+   ✅ Aquí sí recortamos el fondo, no el contenido */
 .neon-inner{
   border-radius: 1.25rem; /* 20px */
+  overflow: hidden; /* ✅ solo fondo limpio */
   background:
     radial-gradient(900px 260px at 10% 10%, rgba(34,211,238,0.10), transparent 55%),
     radial-gradient(700px 240px at 88% 22%, rgba(250,204,21,0.10), transparent 58%),
@@ -153,42 +180,33 @@
 }
 
 /* =========================
-   ✅ FIXES MÓVIL (anti-desborde)
+   FIXES anti-desborde
    ========================= */
 
-/* Si un contenedor tiene display:flex, y dentro hay texto,
-   este min-width:0 es CLAVE para que truncate/line-clamp funcionen */
-.min-w-0 { min-width: 0; }
+/* links/urls largas no rompen el layout */
+a { overflow-wrap: anywhere; }
 
-/* Rompe palabras largas (por ejemplo títulos raros, tags, URLs) */
-.break-words { overflow-wrap: anywhere; word-break: break-word; }
-
-/* Evita que los botones se “salgan” */
-.btn-fit {
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Helpers */
-.hyphens-auto{ hyphens:auto; }
-
-.line-clamp-1{
+/* line clamp helpers */
+.u-clamp-1{
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.line-clamp-2{
+.u-clamp-2{
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.line-clamp-3{
+.u-clamp-3{
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ✅ en móvil, botones en cards mejor a 100% */
+@media (max-width: 640px){
+  .card-cta{ width: 100%; }
 }

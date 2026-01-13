@@ -1,32 +1,32 @@
-@extends('layouts.marketing')
-@section('title', 'Iniciar sesión · Pagina-IA')
+<?php $__env->startSection('title', 'Iniciar sesión · Pagina-IA'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="mx-auto max-w-md glass rounded-3xl p-8">
     <h2 class="text-2xl font-extrabold">Iniciar sesión</h2>
     <p class="text-white/70 mt-2">No es necesario iniciar sesión para recibir información; puedes enviar un mensaje directamente por WhatsApp seleccionando el plan. Si deseas realizar alguna consulta después de adquirir el servicio, será necesario iniciar sesión..</p>
 
-    @if (session('status'))
+    <?php if(session('status')): ?>
         <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">
-            {{ session('status') }}
-        </div>
-    @endif
+            <?php echo e(session('status')); ?>
 
-    @if ($errors->any())
+        </div>
+    <?php endif; ?>
+
+    <?php if($errors->any()): ?>
         <div class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">
             <ul class="list-disc ml-5">
-                @foreach($errors->all() as $e) <li>{{ $e }}</li> @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $e): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <li><?php echo e($e); ?></li> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
-    @endif
+    <?php endif; ?>
 
-    <form class="mt-6 space-y-4" method="POST" action="{{ route('login') }}">
-        @csrf
+    <form class="mt-6 space-y-4" method="POST" action="<?php echo e(route('login')); ?>">
+        <?php echo csrf_field(); ?>
 
         <div>
             <label class="text-sm text-white/80">Email</label>
             <input name="email" type="email" required autofocus
-                   value="{{ old('email') }}"
+                   value="<?php echo e(old('email')); ?>"
                    class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3">
         </div>
 
@@ -45,8 +45,10 @@
 
         <div class="text-center text-white/70 text-sm">
             ¿No tienes cuenta?
-            <a class="text-cyan-300 hover:underline" href="{{ route('register') }}">Crear cuenta</a>
+            <a class="text-cyan-300 hover:underline" href="<?php echo e(route('register')); ?>">Crear cuenta</a>
         </div>
     </form>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.marketing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Pagina-ia\resources\views/auth/login.blade.php ENDPATH**/ ?>
