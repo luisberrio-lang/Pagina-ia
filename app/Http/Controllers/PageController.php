@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Tool;
 
 class PageController extends Controller
@@ -11,24 +12,33 @@ class PageController extends Controller
         return view('pages.inicio');
     }
 
-    public function herramientas()
+    public function herramientas(Request $request)
     {
         $tools = Tool::where('is_active', true)
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->get();
 
-        return view('pages.herramientas', compact('tools'));
+        $activeTool = null;
+
+        if ($request->filled('tool')) {
+            $activeTool = $tools->firstWhere('id', (int) $request->tool);
+        }
+
+        if (!$activeTool) {
+            $activeTool = $tools->first();
+        }
+
+        return view('pages.herramientas', compact('tools', 'activeTool'));
     }
 
-    public function precio()
+    // Para que no te rompa /precio y quede consistente
+    public function precio(Request $request)
     {
-        $tools = Tool::where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderByDesc('id')
-            ->get();
-
-        return view('pages.precio', compact('tools'));
+        // Lo mandamos a Herramientas IA y abrimos la sección planes
+        return redirect()->to(
+            route('herramientas', $request->filled('tool') ? ['tool' => $request->tool] : []) . '#planes'
+        );
     }
 
     public function soporte()

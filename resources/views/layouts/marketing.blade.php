@@ -1,85 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Pagina-IA')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@yield('title', 'GVelarde')</title>
+
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+  {{-- Favicons (Laravel) --}}
+  <link rel="icon" href="{{ asset('favicon.ico') }}?v=3">
+  <link rel="icon" type="image/png" href="{{ asset('images/logopng.png') }}?v=3">
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
 
 <!-- Fondo tech + robot -->
 <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-3xl"></div>
-    <div class="absolute top-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-cyan-400/15 blur-3xl"></div>
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_60%)]"></div>
-    <div class="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]"></div>
+  <div class="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-3xl"></div>
+  <div class="absolute top-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-cyan-400/15 blur-3xl"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_60%)]"></div>
+  <div class="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]"></div>
 
-    <img src="{{ asset('images/robot-3d.png') }}" alt="Robot 3D" class="hero-robot"/>
+  <img src="{{ asset('images/robot-3d.png') }}" alt="Robot 3D" class="hero-robot"/>
 </div>
 
-<header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+@php
+  // ✅ LINKS REALES
+  $phoneHeader = preg_replace('/\D+/', '', env('WHATSAPP_NUMBER', '51951386898')); // +51 951 386 898
+  $waHeaderUrl = "https://wa.me/{$phoneHeader}?text=" . urlencode("Hola, quiero información 👋");
 
-        <!-- LOGO -->
-        <a href="{{ route('inicio') }}" class="flex items-center gap-2">
-            <span class="grid h-9 w-9 place-items-center rounded-xl bg-white/10 border border-white/10">
-                <span class="text-cyan-300 font-bold">AI</span>
-            </span>
-            <span class="font-bold tracking-wide">
-                Pagina<span class="text-cyan-300">-IA</span>
-            </span>
+  $fbUrl = "https://web.facebook.com/reel/4152099245054712";
+  $ytUrl = "https://www.youtube.com/@Historiasenc%C3%B3digo";
+@endphp
+
+<header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl">
+  <nav class="w-full flex items-center justify-between px-6 py-4">
+
+    <!-- IZQUIERDA: LOGO -->
+    <a href="{{ route('inicio') }}" class="flex items-center gap-3 shrink-0">
+      <img
+        src="{{ asset('images/logopagina.jpeg') }}"
+        alt="G Velarde"
+        class="h-10 w-10 rounded-xl object-cover border border-white/10 bg-white/5"
+      >
+      <span class="font-bold tracking-wide">
+        G<span class="text-cyan-300">Velarde</span>
+      </span>
+    </a>
+
+    <!-- CENTRO: MENÚ -->
+    <div class="hidden md:flex flex-1 items-center justify-center gap-6">
+      <a class="hover:text-cyan-300 transition" href="{{ route('inicio') }}">Inicio</a>
+      <a class="hover:text-cyan-300 transition" href="{{ route('herramientas') }}">Herramientas IA</a>
+      <a class="hover:text-cyan-300 transition" href="{{ route('precio') }}">Precio</a>
+      <a class="hover:text-cyan-300 transition" href="{{ route('soporte') }}">Soporte</a>
+      <a class="hover:text-cyan-300 transition" href="{{ route('faq') }}">FAQ</a>
+    </div>
+
+    <!-- DERECHA: ICONOS + BOTONES -->
+    <div class="flex items-center gap-3 shrink-0">
+
+      {{-- ICONOS REDES --}}
+      <div class="hidden sm:flex items-center gap-2 mr-1">
+
+        <!-- WhatsApp (✅ a tu número) -->
+        <a href="{{ $waHeaderUrl }}" target="_blank" rel="noopener" aria-label="WhatsApp"
+           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                  hover:bg-white/10 hover:border-emerald-400/40 transition">
+          <img src="{{ asset('images/pngegg.png') }}" alt="WhatsApp" class="h-5 w-5">
         </a>
 
-        <!-- MENÚ -->
-        <div class="hidden items-center gap-6 md:flex">
-            <a class="hover:text-cyan-300 transition" href="{{ route('inicio') }}">Inicio</a>
-            <a class="hover:text-cyan-300 transition" href="{{ route('herramientas') }}">Herramientas IA</a>
-            <a class="hover:text-cyan-300 transition" href="{{ route('precio') }}">Precio</a>
-            <a class="hover:text-cyan-300 transition" href="{{ route('soporte') }}">Soporte</a>
-            <a class="hover:text-cyan-300 transition" href="{{ route('faq') }}">FAQ</a>
-        </div>
+        <!-- Facebook (✅ tu reel) -->
+        <a href="{{ $fbUrl }}" target="_blank" rel="noopener" aria-label="Facebook"
+           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                  hover:bg-white/10 hover:border-sky-400/40 transition">
+          <svg class="h-5 w-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5v1.8H17l-.5 2.9h-2.4v7A10 10 0 0 0 22 12z"/>
+          </svg>
+        </a>
 
-        <!-- BOTONES (RESULTADO FINAL) -->
-        <div class="flex items-center gap-3">
+        <!-- YouTube (✅ tu canal) -->
+        <a href="{{ $ytUrl }}" target="_blank" rel="noopener" aria-label="YouTube"
+           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                  hover:bg-white/10 hover:border-red-400/40 transition">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4A3 3 0 0 0 2.4 7.2 31.4 31.4 0 0 0 2 12a31.4 31.4 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 22 12a31.4 31.4 0 0 0-.4-4.8zM10 15.5v-7l6 3.5-6 3.5z"/>
+          </svg>
+        </a>
 
-            {{-- INVITADO --}}
-            @guest
-                <a class="btn-tech" href="{{ route('login') }}">Iniciar sesión</a>
-                <a class="btn-primary hidden sm:inline-flex" href="{{ route('register') }}">Crear cuenta</a>
-            @endguest
+      </div>
 
-            {{-- LOGEADO --}}
-            @auth
-                {{-- ADMIN --}}
-                @if(auth()->user()->isAdmin())
-                    <a class="btn-tech" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                    <a class="btn-tech" href="{{ route('admin.tickets') }}">Tickets</a>
-                @endif
+      {{-- INVITADO --}}
+      @guest
+        <a class="btn-tech" href="{{ route('login') }}">Iniciar sesión</a>
+        <a class="btn-primary hidden sm:inline-flex" href="{{ route('register') }}">Crear cuenta</a>
+      @endguest
 
-                {{-- CLIENTE: solo cerrar sesión --}}
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn-tech">Cerrar sesión</button>
-                </form>
-            @endauth
+      {{-- LOGEADO --}}
+      @auth
+        @if(auth()->user()->isAdmin())
+          <a class="btn-tech" href="{{ route('admin.dashboard') }}">Dashboard</a>
+          <a class="btn-tech" href="{{ route('admin.tickets') }}">Tickets</a>
+        @endif
 
-        </div>
-    </nav>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="btn-tech">Cerrar sesión</button>
+        </form>
+      @endauth
+
+    </div>
+  </nav>
 </header>
 
 <main class="mx-auto max-w-6xl px-4 py-10">
-    <div class="content-surface p-6 md:p-10">
-        @yield('content')
-    </div>
+  <div class="content-surface p-6 md:p-10">
+    @yield('content')
+  </div>
 </main>
 
 <footer class="border-t border-white/10">
-    <div class="mx-auto max-w-6xl px-4 py-10 text-sm text-white/70 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-        <p>© {{ date('Y') }} Pagina-IA</p>
-        <p class="text-white/50">Laravel + Tailwind</p>
-    </div>
+  <div class="mx-auto max-w-6xl px-4 py-10 text-sm flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+    <p class="text-white/70">
+      © {{ date('Y') }} <span class="font-semibold text-white/85">G Velarde</span>
+    </p>
+
+    <p class="text-white/60 md:text-right">
+      <span class="font-semibold text-white/80">La central de las mejores IA</span>
+      <span class="text-white/50">en un solo lugar.</span>
+    </p>
+  </div>
 </footer>
 
 </body>

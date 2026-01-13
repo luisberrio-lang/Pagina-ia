@@ -1,5 +1,5 @@
 
-<?php $__env->startSection('title', 'Soporte · Pagina-IA'); ?>
+<?php $__env->startSection('title', 'Soporte · GVelarde'); ?>
 
 <?php $__env->startSection('content'); ?>
 <div class="grid gap-8 lg:grid-cols-2 lg:items-start">

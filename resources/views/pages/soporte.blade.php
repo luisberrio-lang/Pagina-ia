@@ -1,5 +1,5 @@
 @extends('layouts.marketing')
-@section('title', 'Soporte · Pagina-IA')
+@section('title', 'Soporte · GVelarde')
 
 @section('content')
 <div class="grid gap-8 lg:grid-cols-2 lg:items-start">

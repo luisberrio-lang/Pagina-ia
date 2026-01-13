@@ -1,5 +1,5 @@
 
-<?php $__env->startSection('title', 'FAQ · Pagina-IA'); ?>
+<?php $__env->startSection('title', 'FAQ · GVelarde'); ?>
 
 <?php $__env->startSection('content'); ?>
 <h2 class="text-3xl font-extrabold">Preguntas frecuentes</h2>

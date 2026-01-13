@@ -1,5 +1,5 @@
 @extends('layouts.marketing')
-@section('title', 'FAQ · Pagina-IA')
+@section('title', 'FAQ · GVelarde')
 
 @section('content')
 <h2 class="text-3xl font-extrabold">Preguntas frecuentes</h2>

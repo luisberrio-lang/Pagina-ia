@@ -6,12 +6,16 @@
   html { scroll-behavior: smooth; }
 }
 
+/* =========================
+   Componentes Tailwind
+   ========================= */
 @layer components {
-  /* Paneles SIN backdrop-blur para que el robot NO se vea borroso */
+  /* Paneles SIN blur para que el robot NO se vea borroso */
   .glass {
     @apply bg-slate-950/45 border border-white/10 shadow-xl;
   }
 
+  /* Superficie principal del contenido (sin blur) */
   .content-surface {
     @apply rounded-3xl border border-white/10 bg-slate-950/40 shadow-2xl;
   }
@@ -30,7 +34,7 @@
   }
 
   .card-hover {
-    @apply transition duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/10;
+    @apply transition duration-200 hover:-translate-y-1;
   }
 
   .input-tech{
@@ -40,18 +44,19 @@
   }
 }
 
-/* Robot 3D (centrado y grande) */
+/* =========================
+   Robot 3D (centrado y grande)
+   ========================= */
 .hero-robot{
   position: absolute;
   left: 50%;
   top: 52%;
   transform: translate(-50%, -50%);
   width: min(900px, 80vw);
-  opacity: .70; /* más visible */
+  opacity: .70;
   pointer-events: none;
   user-select: none;
 
-  /* sin blur, solo sombras para que “resalte” */
   filter:
     drop-shadow(0 0 70px rgba(34,211,238,.22))
     drop-shadow(0 0 140px rgba(168,85,247,.18))
@@ -66,11 +71,124 @@
   50%{ transform: translate(-50%, -50%) translate3d(0,-14px,0); }
 }
 
-/* Responsive */
 @media (max-width: 768px){
   .hero-robot{
     top: 56%;
     width: 560px;
     opacity: .35;
   }
+}
+
+/* =========================
+   NEÓN PREMIUM (solo borde + glow)
+   + fondo interno (degradado sutil)
+   ========================= */
+
+.neon-frame{
+  position: relative;
+  border-radius: 1.5rem; /* 24px */
+  background: transparent;
+  border: 1px solid rgba(34,211,238,0.28);
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,0.18),
+    0 0 26px rgba(34,211,238,0.12),
+    0 0 60px rgba(168,85,247,0.10);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  overflow: hidden; /* ✅ evita que cualquier hijo se “salga” del borde */
+}
+
+.neon-frame:hover{
+  transform: translateY(-2px);
+  border-color: rgba(34,211,238,0.45);
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,0.28),
+    0 0 44px rgba(34,211,238,0.18),
+    0 0 90px rgba(168,85,247,0.14);
+}
+
+/* Fondo interno: azul + toque dorado suave */
+.neon-inner{
+  border-radius: 1.25rem; /* 20px */
+  background:
+    radial-gradient(900px 260px at 10% 10%, rgba(34,211,238,0.10), transparent 55%),
+    radial-gradient(700px 240px at 88% 22%, rgba(250,204,21,0.10), transparent 58%),
+    linear-gradient(135deg, rgba(15,23,42,0.28), rgba(2,6,23,0.18));
+}
+
+/* Variante dorada */
+.neon-gold{
+  border-color: rgba(250,204,21,0.35) !important;
+  box-shadow:
+    0 0 0 1px rgba(250,204,21,0.18),
+    0 0 34px rgba(250,204,21,0.12),
+    0 0 64px rgba(34,211,238,0.10) !important;
+}
+.neon-gold:hover{
+  border-color: rgba(250,204,21,0.48) !important;
+  box-shadow:
+    0 0 0 1px rgba(250,204,21,0.24),
+    0 0 46px rgba(250,204,21,0.16),
+    0 0 92px rgba(168,85,247,0.12) !important;
+}
+
+/* Variante morada */
+.neon-purple{
+  border-color: rgba(168,85,247,0.35) !important;
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,0.18),
+    0 0 34px rgba(168,85,247,0.12),
+    0 0 64px rgba(34,211,238,0.10) !important;
+}
+.neon-purple:hover{
+  border-color: rgba(168,85,247,0.48) !important;
+}
+
+/* Selección clara (para card activa) */
+.neon-selected{
+  border-color: rgba(250,204,21,0.45) !important;
+  box-shadow:
+    0 0 0 1px rgba(250,204,21,0.22),
+    0 0 40px rgba(250,204,21,0.16),
+    0 0 80px rgba(34,211,238,0.10) !important;
+}
+
+/* =========================
+   ✅ FIXES MÓVIL (anti-desborde)
+   ========================= */
+
+/* Si un contenedor tiene display:flex, y dentro hay texto,
+   este min-width:0 es CLAVE para que truncate/line-clamp funcionen */
+.min-w-0 { min-width: 0; }
+
+/* Rompe palabras largas (por ejemplo títulos raros, tags, URLs) */
+.break-words { overflow-wrap: anywhere; word-break: break-word; }
+
+/* Evita que los botones se “salgan” */
+.btn-fit {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Helpers */
+.hyphens-auto{ hyphens:auto; }
+
+.line-clamp-1{
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

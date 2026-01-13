@@ -52,9 +52,10 @@ Route::middleware(['auth', 'admin'])
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::post('/tools', [DashboardController::class, 'storeTool'])->name('tools.store');
+        Route::put('/tools/{tool}', [DashboardController::class, 'updateTool'])->name('tools.update');
         Route::delete('/tools/{tool}', [DashboardController::class, 'destroyTool'])->name('tools.destroy');
 
         Route::get('/tickets', [TicketController::class, 'index'])->name('tickets');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
