@@ -238,7 +238,16 @@
                 <label class="text-sm text-white/80 font-semibold">Incluye (label|texto)</label>
                 <textarea name="includes_text" rows="6" class="input-tech">@php
                   $inc = $tool->includes ?? [];
-                  echo old('includes_text', collect($inc)->map(fn($r)=>($r['label']??'').'|'.($r['text']??''))->implode("\n"));
+                  $incLines = collect($inc)->map(function ($row) {
+                      if (is_array($row)) {
+                          $label = trim($row['label'] ?? '');
+                          $text = trim($row['text'] ?? '');
+                          return $label !== '' ? "{$label}|{$text}" : $text;
+                      }
+
+                      return trim((string) $row);
+                  })->filter()->implode("\n");
+                  echo old('includes_text', $incLines);
                 @endphp</textarea>
               </div>
 

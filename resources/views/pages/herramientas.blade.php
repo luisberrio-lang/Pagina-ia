@@ -98,17 +98,44 @@
             </div>
           @endif
 
-          <div class="mt-8">
-            <div class="text-xs tracking-widest text-white/50">¿QUÉ INCLUYE?</div>
-            <div class="mt-4 space-y-2 text-white/85">
-              @foreach(($activeTool->includes ?? []) as $row)
-                <div>
-                  <span class="font-semibold">{{ $row['label'] ?? '' }}:</span>
-                  {{ $row['text'] ?? '' }}
-                </div>
-              @endforeach
+          @php
+            $includesValue = $activeTool->includes ?? [];
+            if (is_string($includesValue)) {
+              $includesValue = array_values(array_filter(array_map('trim', preg_split("/\r\n|\n|\r/", $includesValue))));
+            }
+
+            $includeRows = [];
+            foreach ((array) $includesValue as $row) {
+              if (is_array($row)) {
+                $label = trim($row['label'] ?? '');
+                $text = trim($row['text'] ?? '');
+                if ($label !== '' || $text !== '') {
+                  $includeRows[] = ['label' => $label, 'text' => $text];
+                }
+              } else {
+                $line = trim((string) $row);
+                if ($line !== '') {
+                  $includeRows[] = ['label' => '', 'text' => $line];
+                }
+              }
+            }
+          @endphp
+
+          @if(count($includeRows))
+            <div class="mt-8">
+              <div class="text-xs tracking-widest text-white/50">¿QUÉ INCLUYE?</div>
+              <div class="mt-4 space-y-2 text-white/85">
+                @foreach($includeRows as $row)
+                  <div>
+                    @if($row['label'] !== '')
+                      <span class="font-semibold">{{ $row['label'] }}:</span>
+                    @endif
+                    {{ $row['text'] }}
+                  </div>
+                @endforeach
+              </div>
             </div>
-          </div>
+          @endif
 
           @if(!empty($activeTool->extras))
             <div class="mt-8">
