@@ -61,6 +61,32 @@
     @apply mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white
            placeholder:text-white/30 outline-none
            focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-300/30;
+    background-color: rgba(15,23,42,0.9);
+    color: #f8fafc !important;
+    caret-color: #f8fafc;
+    -webkit-text-fill-color: #f8fafc !important;
+    opacity: 1;
+    text-shadow: none;
+  }
+
+  .input-tech:-webkit-autofill,
+  .input-tech:-webkit-autofill:hover,
+  .input-tech:-webkit-autofill:focus,
+  .input-tech:-webkit-autofill:active {
+    -webkit-text-fill-color: #f8fafc;
+    box-shadow: 0 0 0 1000px rgba(15,23,42,0.9) inset;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  .input-tech[type="number"]{
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  .input-tech[type="number"]::-webkit-outer-spin-button,
+  .input-tech[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .nav-item{

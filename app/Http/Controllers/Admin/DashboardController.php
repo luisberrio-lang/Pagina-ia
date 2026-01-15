@@ -192,13 +192,16 @@ class DashboardController extends Controller
 
         foreach ($lines as $line) {
             $sep = str_contains($line, '|') ? '|' : (str_contains($line, ':') ? ':' : null);
-            if (!$sep) continue;
+            if (!$sep) {
+                $rows[] = ['label' => '', 'text' => $line];
+                continue;
+            }
 
             [$label, $value] = explode($sep, $line, 2);
             $label = trim($label);
             $value = trim($value);
 
-            if ($label !== '' && $value !== '') {
+            if ($label !== '' || $value !== '') {
                 $rows[] = ['label' => $label, 'text' => $value];
             }
         }
