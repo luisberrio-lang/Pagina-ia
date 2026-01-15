@@ -134,30 +134,36 @@
 
           <?php
             $plans = [
-              ['key'=>'monthly',    'label'=>'Mensual',    'period'=>'mensual',    'price'=>$activeTool->price_monthly,    'old'=>$activeTool->old_price_monthly,    'off'=>$activeTool->off_monthly],
-              ['key'=>'bimestral',  'label'=>'Bimestral',  'period'=>'bimestral',  'price'=>$activeTool->price_bimestral,  'old'=>$activeTool->old_price_bimestral,  'off'=>$activeTool->off_bimestral],
-              ['key'=>'trimestral', 'label'=>'Trimestral', 'period'=>'trimestral', 'price'=>$activeTool->price_trimestral, 'old'=>$activeTool->old_price_trimestral, 'off'=>$activeTool->off_trimestral],
-              ['key'=>'semestral',  'label'=>'Semestral',  'period'=>'semestral',  'price'=>$activeTool->price_semestral,  'old'=>$activeTool->old_price_semestral,  'off'=>$activeTool->off_semestral],
-              ['key'=>'anual',      'label'=>'Anual',      'period'=>'anual',      'price'=>$activeTool->price_anual,      'old'=>$activeTool->old_price_anual,      'off'=>$activeTool->off_anual],
+              ['key'=>'monthly',    'label'=>'Mensual',    'period'=>'mensual',    'price'=>$activeTool->price_monthly,    'old'=>$activeTool->old_price_monthly],
+              ['key'=>'bimestral',  'label'=>'Bimestral',  'period'=>'bimestral',  'price'=>$activeTool->price_bimestral,  'old'=>$activeTool->old_price_bimestral],
+              ['key'=>'trimestral', 'label'=>'Trimestral', 'period'=>'trimestral', 'price'=>$activeTool->price_trimestral, 'old'=>$activeTool->old_price_trimestral],
+              ['key'=>'semestral',  'label'=>'Semestral',  'period'=>'semestral',  'price'=>$activeTool->price_semestral,  'old'=>$activeTool->old_price_semestral],
+              ['key'=>'anual',      'label'=>'Anual',      'period'=>'anual',      'price'=>$activeTool->price_anual,      'old'=>$activeTool->old_price_anual],
             ];
+
+            $calcOff = function($old, $new){
+              $old = (float)$old; $new = (float)$new;
+              if ($old > 0 && $new > 0 && $old > $new) {
+                return (int) round((($old - $new) / $old) * 100);
+              }
+              return null;
+            };
           ?>
 
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <?php $__currentLoopData = $plans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
               <?php
                 $hasPrice = !is_null($p['price']) && (float)$p['price'] > 0;
-                $priceValue = $hasPrice ? (float) $p['price'] : null;
-                $price = $hasPrice ? number_format($priceValue, 0) : null;
-                $currencyClass = ($priceValue !== null && $priceValue >= 100) ? 'text-2xl' : 'text-3xl';
-                $amountClass = ($priceValue !== null && $priceValue >= 100) ? 'text-3xl' : 'text-4xl';
+                $price = $hasPrice ? number_format((float)$p['price'], 0) : null;
 
                 $hasOld = !is_null($p['old']) && (float)$p['old'] > 0;
                 $old = $hasOld ? number_format((float)$p['old'], 0) : null;
 
-                $off = $p['off'];
+                $off = ($hasOld && $hasPrice) ? $calcOff($p['old'], $p['price']) : null;
               ?>
 
               <div class="neon-frame <?php echo e($p['key']==='monthly' ? 'neon-gold' : ''); ?> <?php echo e($p['key']==='anual' ? 'neon-purple' : ''); ?>">
+                
                 <div class="neon-inner p-4">
                   <div class="flex items-start justify-between gap-3">
                     <div class="text-sm font-extrabold text-white/95">
@@ -166,30 +172,31 @@
                     </div>
                   </div>
 
-                  <?php if($hasOld): ?>
-                    <div class="mt-2 flex items-center gap-2 flex-wrap">
-                      <span class="text-xs text-white/55 line-through whitespace-nowrap">
+                  
+                  <?php if($hasPrice && $hasOld && $off): ?>
+                    <div class="mt-2 inline-flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                      <span class="text-xs text-white/55 line-through whitespace-nowrap shrink-0">
                         S/. <?php echo e($old); ?>
 
                       </span>
 
-                      <?php if(!is_null($off) && (int) $off > 0): ?>
-                        <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap
-                                     bg-amber-300/15 border border-amber-200/30 text-amber-100
-                                     shadow-[0_0_18px_rgba(250,204,21,0.18)]">
-                          <?php echo e((int) $off); ?>% OFF
-                        </span>
-                      <?php endif; ?>
+                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-amber-100
+                                   border border-amber-200/40 bg-gradient-to-r from-amber-200/20 via-yellow-300/20 to-amber-200/20
+                                   shadow-[0_0_18px_rgba(250,204,21,0.25)]">
+                        <?php echo e($off); ?>% OFF
+                      </span>
                     </div>
                   <?php endif; ?>
 
-                  <div class="mt-3">
+                  
+                  <div class="mt-2">
                     <?php if($hasPrice): ?>
-                      <div class="flex items-baseline gap-2 text-white leading-none">
-                        <span class="<?php echo e($currencyClass); ?> font-extrabold text-white/90">S/.</span>
-                        <span class="<?php echo e($amountClass); ?> font-extrabold"><?php echo e($price); ?></span>
+                      <div class="flex items-end gap-2 text-white leading-none">
+                        <span class="text-2xl sm:text-3xl font-bold tracking-tight">S/.</span>
+                        <span class="text-4xl font-extrabold"><?php echo e($price); ?></span>
                       </div>
 
+                      
                       <div class="mt-2 text-sm text-white/60">
                         S/. <?php echo e($price); ?> <?php echo e($p['period']); ?>
 

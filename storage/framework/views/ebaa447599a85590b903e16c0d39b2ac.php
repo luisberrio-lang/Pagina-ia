@@ -142,20 +142,31 @@ unset($__errorArgs, $__bag); ?>
 
           <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <?php $__currentLoopData = $planFields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-              <div class="glass rounded-2xl p-4 border border-white/10">
+              <div class="glass rounded-2xl p-4 border border-white/10" data-off-wrapper>
                 <p class="font-semibold text-white/85 text-sm"><?php echo e($p['name']); ?></p>
 
                 <label class="text-xs text-white/60 mt-3 block">Precio anterior (tachado)</label>
-                <input type="number" step="0.01" min="0"
-                       name="old_price_<?php echo e($p['k']); ?>"
-                       value="<?php echo e(old('old_price_'.$p['k'])); ?>"
-                       class="input-tech" placeholder="0.00">
+                <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input type="number" step="0.01" min="0"
+                         name="old_price_<?php echo e($p['k']); ?>"
+                         value="<?php echo e(old('old_price_'.$p['k'])); ?>"
+                         class="input-tech sm:max-w-[140px]" placeholder="0.00" data-old-input>
+
+                  <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap" data-off-preview hidden>
+                    <span class="line-through whitespace-nowrap" data-old-display></span>
+                    <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-amber-100
+                                 border border-amber-200/40 bg-gradient-to-r from-amber-200/20 via-yellow-300/20 to-amber-200/20
+                                 shadow-[0_0_18px_rgba(250,204,21,0.25)]">
+                      <span data-off-badge></span>% OFF
+                    </span>
+                  </div>
+                </div>
 
                 <label class="text-xs text-white/60 mt-3 block">Precio actual</label>
                 <input type="number" step="0.01" min="0"
                        name="price_<?php echo e($p['k']); ?>"
                        value="<?php echo e(old('price_'.$p['k'])); ?>"
-                       class="input-tech" placeholder="0.00">
+                       class="input-tech" placeholder="0.00" data-price-input>
               </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
           </div>
@@ -298,20 +309,31 @@ unset($__errorArgs, $__bag); ?>
 
                 <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                   <?php $__currentLoopData = $editPlans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="glass rounded-2xl p-4 border border-white/10">
+                    <div class="glass rounded-2xl p-4 border border-white/10" data-off-wrapper>
                       <p class="font-semibold text-white/85 text-sm"><?php echo e($p['name']); ?></p>
 
                       <label class="text-xs text-white/60 mt-3 block">Precio anterior</label>
-                      <input type="number" step="0.01" min="0"
-                             name="old_price_<?php echo e($p['k']); ?>"
-                             value="<?php echo e(old('old_price_'.$p['k'], data_get($tool, 'old_price_'.$p['k']))); ?>"
-                             class="input-tech">
+                      <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <input type="number" step="0.01" min="0"
+                               name="old_price_<?php echo e($p['k']); ?>"
+                               value="<?php echo e(old('old_price_'.$p['k'], data_get($tool, 'old_price_'.$p['k']))); ?>"
+                               class="input-tech sm:max-w-[140px]" data-old-input>
+
+                        <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap" data-off-preview hidden>
+                          <span class="line-through whitespace-nowrap" data-old-display></span>
+                          <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-amber-100
+                                       border border-amber-200/40 bg-gradient-to-r from-amber-200/20 via-yellow-300/20 to-amber-200/20
+                                       shadow-[0_0_18px_rgba(250,204,21,0.25)]">
+                            <span data-off-badge></span>% OFF
+                          </span>
+                        </div>
+                      </div>
 
                       <label class="text-xs text-white/60 mt-3 block">Precio actual</label>
                       <input type="number" step="0.01" min="0"
                              name="price_<?php echo e($p['k']); ?>"
                              value="<?php echo e(old('price_'.$p['k'], data_get($tool, 'price_'.$p['k']))); ?>"
-                             class="input-tech">
+                             class="input-tech" data-price-input>
                     </div>
                   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
@@ -345,6 +367,53 @@ unset($__errorArgs, $__bag); ?>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const formatMoney = (value) => {
+      if (Number.isNaN(value)) return null;
+      return new Intl.NumberFormat('es-PE', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(value);
+    };
+
+    const updatePreview = (wrapper) => {
+      const oldInput = wrapper.querySelector('[data-old-input]');
+      const priceInput = wrapper.querySelector('[data-price-input]');
+      const preview = wrapper.querySelector('[data-off-preview]');
+      const oldDisplay = wrapper.querySelector('[data-old-display]');
+      const offBadge = wrapper.querySelector('[data-off-badge]');
+
+      if (!oldInput || !priceInput || !preview || !oldDisplay || !offBadge) return;
+
+      const oldValue = parseFloat(oldInput.value);
+      const priceValue = parseFloat(priceInput.value);
+      const hasOld = !Number.isNaN(oldValue) && oldValue > 0;
+      const hasPrice = !Number.isNaN(priceValue) && priceValue > 0;
+      const off = hasOld && hasPrice && oldValue > priceValue
+        ? Math.round(((oldValue - priceValue) / oldValue) * 100)
+        : null;
+
+      if (hasOld && off) {
+        oldDisplay.textContent = `S/. ${formatMoney(oldValue)}`;
+        offBadge.textContent = off;
+        preview.hidden = false;
+      } else {
+        preview.hidden = true;
+      }
+    };
+
+    document.querySelectorAll('[data-off-wrapper]').forEach((wrapper) => {
+      const oldInput = wrapper.querySelector('[data-old-input]');
+      const priceInput = wrapper.querySelector('[data-price-input]');
+      const handler = () => updatePreview(wrapper);
+
+      oldInput?.addEventListener('input', handler);
+      priceInput?.addEventListener('input', handler);
+      updatePreview(wrapper);
+    });
+  });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.marketing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\pagina-ia\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

@@ -143,7 +143,7 @@ Recursos adicionales">{{ old('extras_text') }}</textarea>
                          class="input-tech sm:max-w-[140px]"
                          placeholder="Ej: 33.00" data-old-input>
 
-                  <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap pointer-events-none" data-off-preview hidden>
+                  <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap" data-off-preview hidden>
                     <span class="line-through whitespace-nowrap" data-old-display></span>
                     <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-amber-100
                                  border border-amber-200/40 bg-gradient-to-r from-amber-200/20 via-yellow-300/20 to-amber-200/20
@@ -315,7 +315,7 @@ Recursos adicionales">{{ old('extras_text', implode("\n", $tool->extras ?? [])) 
                                class="input-tech sm:max-w-[140px]"
                                placeholder="Ej: 33.00" data-old-input>
 
-                        <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap pointer-events-none" data-off-preview hidden>
+                        <div class="flex items-center gap-2 flex-nowrap text-xs text-white/60 whitespace-nowrap" data-off-preview hidden>
                           <span class="line-through whitespace-nowrap" data-old-display></span>
                           <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-amber-100
                                        border border-amber-200/40 bg-gradient-to-r from-amber-200/20 via-yellow-300/20 to-amber-200/20
