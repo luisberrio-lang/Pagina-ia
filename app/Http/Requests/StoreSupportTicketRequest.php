@@ -1,19 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Requests;
 
-use App\Http\Requests\StoreSupportTicketRequest;
-use App\Models\SupportTicket;
+use Illuminate\Foundation\Http\FormRequest;
 
-class SupportTicketController extends Controller
+class StoreSupportTicketRequest extends FormRequest
 {
-    public function store(StoreSupportTicketRequest $request)
+    public function authorize(): bool
     {
-        $data = $request->validated();
-        $data['user_id'] = auth()->id();
+        return true;
+    }
 
-        SupportTicket::create($data);
-
-        return back()->with('ok', '✅ Ticket enviado correctamente.');
+    public function rules(): array
+    {
+        return [
+            'name'    => ['required', 'string', 'max:120'],
+            'email'   => ['required', 'email', 'max:160'],
+            'subject' => ['required', 'string', 'max:140'],
+            'message' => ['required', 'string'],
+        ];
     }
 }
