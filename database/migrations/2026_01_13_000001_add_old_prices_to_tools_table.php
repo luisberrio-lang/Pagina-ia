@@ -19,14 +19,7 @@ return new class extends Migration {
 
             foreach ($cols as $oldCol => $priceCol) {
                 if (!Schema::hasColumn('tools', $oldCol)) {
-
-                    // ✅ Si la columna de referencia existe, usamos after()
-                    if (Schema::hasColumn('tools', $priceCol)) {
-                        $table->decimal($oldCol, 10, 2)->nullable()->after($priceCol);
-                    } else {
-                        // ✅ Si NO existe (ej: price_bimestral), NO usamos after para evitar el error SQL
-                        $table->decimal($oldCol, 10, 2)->nullable();
-                    }
+                    $table->decimal($oldCol, 10, 2)->nullable()->after($priceCol);
                 }
             }
         });
