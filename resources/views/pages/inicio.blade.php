@@ -58,12 +58,12 @@
             nuestros servicios de inteligencia artificial de manera profesional y transparente.
           </p>
 
-          <div class="mt-auto pt-4 flex items-center justify-between gap-3">
+          <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Proceso</span>
 
             <a href="https://web.facebook.com/reel/4152099245054712" target="_blank" rel="noopener"
-               class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-xs font-semibold
-                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition">
+               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition whitespace-nowrap">
               Ver video
             </a>
           </div>
@@ -85,12 +85,12 @@
             que confían en nuestros servicios.
           </p>
 
-          <div class="mt-auto pt-4 flex items-center justify-between gap-3">
-            <span class="text-white/45 text-xs">Referencias</span>
+          <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
+            <span class="text-white/45 text-xs">Referencia</span>
 
             <a href="https://whatsapp.com/channel/0029VbCWdafHLHQh0lpDW31J" target="_blank" rel="noopener"
-               class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-xs font-semibold
-                      bg-emerald-500/90 hover:bg-emerald-400 text-white transition">
+               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+                      bg-emerald-500/90 hover:bg-emerald-400 text-white transition whitespace-nowrap">
               Ver canal
             </a>
           </div>
@@ -112,12 +112,12 @@
             nuestras novedades y beneficios.
           </p>
 
-          <div class="mt-auto pt-4 flex items-center justify-between gap-3">
+          <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Acceso</span>
 
             <a href="https://chat.whatsapp.com/Bb3rE91HltALEzI6ccdLp5" target="_blank" rel="noopener"
-               class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-xs font-semibold
-                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition">
+               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition whitespace-nowrap">
               Unirme
             </a>
           </div>
@@ -132,7 +132,7 @@
 <section class="mt-12">
   <div class="neon-frame">
     <div class="neon-inner p-6 md:p-8">
-      <h2 class="text-2xl md:text-3xl font-extrabold">Cómo funciona (video)</h2>
+      <h2 class="text-2xl md:text-3xl font-extrabold">⏯️Cómo funciona (video)</h2>
       <p class="text-white/70 mt-2">
         Mira una demostración rápida de cómo trabajamos y cómo acceder a los packs.
       </p>
