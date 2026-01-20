@@ -79,7 +79,10 @@
                     </span>
 
                     @if($badge)
-                        <span class="text-xs rounded-full bg-cyan-300/15 border border-cyan-300/30 px-3 py-1 text-cyan-200">
+                        <span class="text-[10px] px-3 py-1 rounded-full font-semibold bg-[#D3FF00] text-black/95
+                                     border border-[#D3FF00]
+                                     shadow-[0_0_10px_rgba(211,255,0,0.75),0_0_22px_rgba(211,255,0,0.45)]
+                                     shrink-0">
                             {{ $badge }}
                         </span>
                     @endif

@@ -20,7 +20,7 @@
     </p>
 
     <div class="mt-7 flex flex-wrap gap-3">
-      <a href="{{ route('herramientas') }}" class="btn-primary">Ver herramientas</a>
+      <a href="{{ route('herramientas') }}" class="btn-primary">Ver Planes</a>
       <a href="{{ route('precio') }}" class="btn-tech">Ver precios</a>
     </div>
   </div>
@@ -35,9 +35,13 @@
         </p>
       </div>
 
-      <span class="hidden md:inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-2 text-xs text-white/70">
-        ✅ 100% verificado
-      </span>
+<span class="hidden md:inline-flex items-center gap-2 rounded-full
+             bg-[#04C918]/15 border border-[#04C918]/40
+             px-3 py-2 text-xs text-[#04C918]
+             shadow-[0_0_12px_rgba(4,201,24,0.25)]">
+  ✅ 100% verificado
+</span>
+
     </div>
 
     {{-- Cards --}}
@@ -61,11 +65,13 @@
           <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Proceso</span>
 
-            <a href="https://web.facebook.com/reel/4152099245054712" target="_blank" rel="noopener"
-               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
-                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition whitespace-nowrap">
-              Ver video
-            </a>
+<a href="https://web.facebook.com/reel/4152099245054712" target="_blank" rel="noopener"
+   class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+          bg-[#002AD4] border border-[#002AD4] text-white hover:bg-[#1A43FF] hover:border-[#1A43FF]
+          transition whitespace-nowrap">
+  Ver video
+</a>
+
           </div>
         </div>
       </div>
@@ -88,11 +94,12 @@
           <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Referencia</span>
 
-            <a href="https://whatsapp.com/channel/0029VbCWdafHLHQh0lpDW31J" target="_blank" rel="noopener"
-               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
-                      bg-emerald-500/90 hover:bg-emerald-400 text-white transition whitespace-nowrap">
-              Ver canal
-            </a>
+<a href="https://whatsapp.com/channel/0029Vb70a5sJuyAHgnr9Tw1C" target="_blank" rel="noopener"
+   class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+          bg-[#05F545] hover:bg-[#2CFF66] text-white transition whitespace-nowrap">
+  Ver canal
+</a>
+
           </div>
         </div>
       </div>
@@ -115,10 +122,13 @@
           <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Acceso</span>
 
-            <a href="https://chat.whatsapp.com/Bb3rE91HltALEzI6ccdLp5" target="_blank" rel="noopener"
-               class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
-                      bg-white/10 border border-white/15 text-white hover:bg-white/15 transition whitespace-nowrap">
-              Unirme
+<a href="https://chat.whatsapp.com/Bb3rE91HltALEzI6ccdLp5" target="_blank" rel="noopener"
+   class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
+          bg-[#05F545] border border-[#05F545] hover:bg-[#2CFF66] hover:border-[#2CFF66]
+          text-white transition whitespace-nowrap">
+  Unirme
+</a>
+
             </a>
           </div>
         </div>
