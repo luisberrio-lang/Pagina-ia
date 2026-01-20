@@ -39,16 +39,12 @@
             </div>
 
             @if($t->badge_text)
-  <span class="text-[10px] px-3 py-1 rounded-full font-extrabold
-               bg-[#D3FF00] text-black
-               border border-[#D3FF00]
-               shadow-[0_0_10px_rgba(211,255,0,0.75),0_0_22px_rgba(211,255,0,0.45)]
-               shrink-0">
-    {{ $t->badge_text }}
-  </span>
-@endif
-
-
+              <span class="text-[10px] px-3 py-1 rounded-full font-extrabold shrink-0"
+                    style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
+                           box-shadow:0 0 10px rgba(211,255,0,.75),0 0 22px rgba(211,255,0,.45);">
+                {{ $t->badge_text }}
+              </span>
+            @endif
           </div>
 
           <div class="mt-2 font-extrabold leading-tight text-white/95">
@@ -65,16 +61,15 @@
           </div>
 
           <a href="{{ route('herramientas', ['tool' => $t->id]) }}#planes"
-   class="mt-3 inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-[12px] font-semibold
-          bg-[#1D00F5] text-white border border-[#1D00F5]
-          shadow-[0_0_10px_rgba(29,0,245,0.65),0_0_28px_rgba(29,0,245,0.45)]
-          hover:bg-[#3A1BFF] hover:border-[#3A1BFF]
-          hover:shadow-[0_0_12px_rgba(29,0,245,0.80),0_0_36px_rgba(29,0,245,0.55)]
-          transition sm:absolute sm:bottom-3 sm:right-3 sm:w-auto">
-  Ver detalles y planes
-</a>
-
-
+             class="mt-3 inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-[12px] font-semibold
+                    text-white transition
+                    sm:absolute sm:bottom-3 sm:right-3 sm:w-auto"
+             style="background:#1D00F5;border:1px solid #1D00F5;
+                    box-shadow:0 0 10px rgba(29,0,245,.65),0 0 28px rgba(29,0,245,.45);"
+             onmouseover="this.style.background='#3A1BFF';this.style.borderColor='#3A1BFF';this.style.boxShadow='0 0 12px rgba(29,0,245,.80),0 0 36px rgba(29,0,245,.55)';"
+             onmouseout="this.style.background='#1D00F5';this.style.borderColor='#1D00F5';this.style.boxShadow='0 0 10px rgba(29,0,245,.65),0 0 28px rgba(29,0,245,.45)';">
+            Ver detalles y planes
+          </a>
         </div>
       </div>
     @endforeach
@@ -87,17 +82,13 @@
 
         {{-- IZQUIERDA --}}
         <div>
-@if($activeTool->badge_text)
-  <span class="text-[12px] px-3 py-1 rounded-full font-extrabold
-               bg-[#D3FF00] text-black
-               border border-[#D3FF00]
-               shadow-[0_0_10px_rgba(211,255,0,0.75),0_0_22px_rgba(211,255,0,0.45)]
-               shrink-0">
-    {{ $activeTool->badge_text }}
-  </span>
-@endif
-
-
+          @if($activeTool->badge_text)
+            <span class="text-[12px] px-3 py-1 rounded-full font-extrabold shrink-0"
+                  style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
+                         box-shadow:0 0 10px rgba(211,255,0,.75),0 0 22px rgba(211,255,0,.45);">
+              {{ $activeTool->badge_text }}
+            </span>
+          @endif
 
           <h3 class="mt-3 text-3xl font-extrabold">{{ $activeTool->title }}</h3>
           <p class="mt-2 text-white/70">{{ $activeTool->short_desc ?? $activeTool->subtitle }}</p>
@@ -187,12 +178,11 @@
                         S/. {{ $old }}
                       </span>
 
-                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-extrabold tracking-wide text-black
-             border border-[#D3FF00] bg-[#D3FF00]
-             shadow-[0_0_10px_rgba(211,255,0,0.85),0_0_24px_rgba(211,255,0,0.55)]">
-  {{ $off }}% OFF
-</span>
-
+                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-black"
+                            style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
+                                   box-shadow:0 0 10px rgba(211,255,0,.85),0 0 24px rgba(211,255,0,.55);">
+                        {{ $off }}% OFF
+                      </span>
                     </div>
                   @endif
 
@@ -237,8 +227,10 @@
           <div class="mt-8">
             <a href="{{ $waUrl }}" target="_blank" rel="noopener"
                class="inline-flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-4 font-extrabold
-                      text-white bg-[#25D350] hover:bg-[#35E062] transition
-                      shadow-[0_0_12px_rgba(37,211,80,0.55),0_0_28px_rgba(37,211,80,0.30)]">
+                      text-white transition"
+               style="background:#25D350;box-shadow:0 0 12px rgba(37,211,80,.55),0 0 28px rgba(37,211,80,.30);"
+               onmouseover="this.style.background='#35E062';"
+               onmouseout="this.style.background='#25D350';">
               <img src="{{ asset('images/pngegg.png') }}" alt="WhatsApp" class="h-6 w-6">
               Contratar por WhatsApp
             </a>

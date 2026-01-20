@@ -79,10 +79,9 @@
                     </span>
 
                     @if($badge)
-                        <span class="text-[10px] px-3 py-1 rounded-full font-semibold bg-[#D3FF00] text-black/95
-                                     border border-[#D3FF00]
-                                     shadow-[0_0_10px_rgba(211,255,0,0.75),0_0_22px_rgba(211,255,0,0.45)]
-                                     shrink-0">
+                        <span class="text-[10px] px-3 py-1 rounded-full font-extrabold shrink-0"
+                              style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
+                                     box-shadow:0 0 10px rgba(211,255,0,.75),0 0 22px rgba(211,255,0,.45);">
                             {{ $badge }}
                         </span>
                     @endif
@@ -176,7 +175,10 @@
 
                 <a href="{{ $waUrl }}" target="_blank" rel="noopener"
                    class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-4 font-semibold
-                          bg-emerald-500 hover:bg-emerald-600 transition text-white">
+                          text-white transition"
+                   style="background:#25D350;box-shadow:0 0 12px rgba(37,211,80,.55),0 0 28px rgba(37,211,80,.30);"
+                   onmouseover="this.style.background='#35E062';"
+                   onmouseout="this.style.background='#25D350';">
                     <img src="{{ asset('images/pngegg.png') }}" alt="WhatsApp" class="h-5 w-5">
                     QUIERO ESTE PLAN por WhatsApp
                 </a>

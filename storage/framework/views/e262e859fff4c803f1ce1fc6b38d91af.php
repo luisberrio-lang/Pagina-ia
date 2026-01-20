@@ -9,6 +9,36 @@
 
   <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>?v=3">
   <link rel="icon" type="image/png" href="<?php echo e(asset('images/logopng.png')); ?>?v=3">
+  <link rel="stylesheet" href="<?php echo e(asset('overrides.css')); ?>?v=<?php echo e(time()); ?>">
+  <style>
+  .content-surface{
+    background-color: rgba(2,6,23,.92) !important;
+    border-color: rgba(255,255,255,.18) !important;
+  }
+
+  .glass{
+    background-color: rgba(2,6,23,.62) !important;
+    border-color: rgba(255,255,255,.14) !important;
+    box-shadow: 0 18px 55px rgba(0,0,0,.55) !important;
+  }
+
+  .neon-frame{
+    border-color: rgba(34,211,238,.40) !important;
+    box-shadow:
+      0 0 0 1px rgba(34,211,238,.35),
+      0 0 34px rgba(34,211,238,.28),
+      0 0 90px rgba(168,85,247,.30) !important;
+  }
+
+  .neon-frame:hover{
+    border-color: rgba(34,211,238,.62) !important;
+    box-shadow:
+      0 0 0 1px rgba(34,211,238,.42),
+      0 0 60px rgba(34,211,238,.32),
+      0 0 130px rgba(168,85,247,.34) !important;
+  }
+</style>
+
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
