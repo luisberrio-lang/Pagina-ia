@@ -154,10 +154,15 @@
       </p>
 
       <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-        <video class="w-full" controls playsinline preload="metadata">
-          <source src="<?php echo e(asset('videos/demo.mp4')); ?>" type="video/mp4">
-          Tu navegador no soporta video HTML5.
-        </video>
+        <div style="position:relative;width:100%;padding-top:56.25%;">
+          <iframe
+            src="https://www.youtube.com/embed/bv0NZv_Wq04"
+            title="Video de YouTube"
+            style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
 
       <p class="mt-3 text-xs text-white/50">
