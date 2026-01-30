@@ -9,7 +9,7 @@ class PageController extends Controller
 {
     public function inicio()
     {
-        return view('pages.inicio');
+        return view('pages.marketing.inicio');
     }
 
     public function herramientas(Request $request)
@@ -29,7 +29,7 @@ class PageController extends Controller
             $activeTool = $tools->first();
         }
 
-        return view('pages.herramientas', compact('tools', 'activeTool'));
+        return view('pages.marketing.herramientas', compact('tools', 'activeTool'));
     }
 
     // Para que no te rompa /precio y quede consistente
@@ -43,11 +43,11 @@ class PageController extends Controller
 
     public function soporte()
     {
-        return view('pages.soporte');
+        return view('pages.marketing.soporte');
     }
 
     public function faq()
     {
-        return view('pages.faq');
+        return view('pages.marketing.faq');
     }
 }

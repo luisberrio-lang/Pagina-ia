@@ -36,11 +36,14 @@
 @layer components {
   /* ✅ Contenido SIEMPRE encima del fondo */
   .content-surface {
-    @apply relative z-10 rounded-3xl border border-white/60 bg-slate-950/90 shadow-2xl;
+    @apply relative z-10 rounded-3xl border border-white/60 shadow-2xl;
+    background-color: rgba(2, 0, 23, 0.90);
   }
 
+  
   .glass {
-    @apply relative z-10 bg-slate-950/45 border border-white/100 shadow-xl;
+    @apply relative z-10 border border-white/100 shadow-xl;
+    background-color: rgba(2, 0, 23, 0.78);
   }
 
   .btn-tech {
@@ -84,16 +87,31 @@
     @apply inline-flex items-center gap-2 rounded-xl px-3 py-2 text-white/80
            hover:text-cyan-200 hover:bg-white/5 transition;
   }
-  .nav-ico{
-    @apply inline-flex h-5 w-5 items-center justify-center text-white/70 shrink-0;
-  }
-  .nav-item:hover .nav-ico{
-    @apply text-cyan-200;
-  }
-  .nav-ico svg{
-    width: 18px;
-    height: 18px;
-  }
+.nav-ico{
+  @apply inline-flex h-5 w-5 items-center justify-center text-cyan-300 shrink-0;
+}
+.nav-item:hover .nav-ico{
+  @apply text-cyan-200;
+}
+.nav-ico svg{
+  width: 18px;
+  height: 18px;
+}
+
+.icon-bright{
+  filter: saturate(1.8) brightness(1.12) drop-shadow(0 0 6px rgba(130, 214, 255, 0.25));
+}
+
+.badge-offer{
+  font-family: "Montserrat", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.price-accent{
+  color: #7fe3ff;
+  text-shadow: 0 0 10px rgba(127,227,255,0.25);
+}
 
   .card-cta{
     @apply inline-flex items-center justify-center whitespace-nowrap;
@@ -141,33 +159,30 @@
 .neon-frame{
   position: relative;
   border-radius: 1.5rem;
-  background: transparent;
-  border: 1px solid rgba(34,211,238,0.28);
+  background: #010012;
+  border: 1px solid rgba(130, 214, 255, 0.22);
   box-shadow:
-    0 0 0 1px rgba(34,211,238,0.30),
-    0 0 26px rgba(34,211,238,0.20),
-    0 0 60px rgba(168,85,247,0.25);
+    0 0 0 1px rgba(130, 214, 255, 0.18),
+    0 0 7px rgba(130, 214, 255, 0.06),
+    0 0 14px rgba(120, 160, 255, 0.06);
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   overflow: visible;
 }
 
 .neon-frame:hover{
   transform: translateY(-2px);
-  border-color: rgba(34,211,238,0.45);
+  border-color: rgba(130, 214, 255, 0.34);
   box-shadow:
-    0 0 0 1px rgba(34,211,238,0.28),
-    0 0 44px rgba(34,211,238,0.18),
-    0 0 90px rgba(168,85,247,0.14);
+    0 0 0 1px rgba(130, 214, 255, 0.26),
+    0 0 12px rgba(130, 214, 255, 0.12),
+    0 0 28px rgba(120, 160, 255, 0.10);
 }
 
 .neon-inner{
   position: relative;
   border-radius: 1.25rem;
   overflow: hidden;
-  background:
-    radial-gradient(900px 260px at 10% 10%, rgba(34,211,238,0.10), transparent 55%),
-    radial-gradient(700px 240px at 88% 22%, rgba(250,204,21,0.10), transparent 58%),
-    linear-gradient(135deg, rgba(15,23,42,0.28), rgba(2,6,23,0.18));
+  background: #010012;
 }
 
 .neon-selected{
@@ -185,4 +200,51 @@ a { overflow-wrap: anywhere; }
 
 @media (max-width: 640px){
   .card-cta{ width: 100%; }
+}
+
+
+
+
+
+
+
+/* =========================
+   Overrides (migrated from marketing layout)
+   ========================= */
+.content-surface{
+  background-color: rgba(2,0,23,0.90) !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+.glass{
+  background-color: rgba(4,0,48,0.76) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  box-shadow: 0 18px 55px rgba(0,0,0,.55) !important;
+}
+
+.hero-glass{
+  background: linear-gradient(
+    135deg,
+    rgba(4,0,48,0.62),
+    rgba(4,0,48,0.48)
+  ) !important;
+  border-color: rgba(255,255,255,.18) !important;
+  box-shadow: 0 22px 60px rgba(0,0,0,.60) !important;
+  backdrop-filter: blur(12px);
+}
+
+.neon-frame{
+  border-color: rgba(34,211,238,.40) !important;
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,.35),
+    0 0 34px rgba(34,211,238,.28),
+    0 0 90px rgba(168,85,247,.30) !important;
+}
+
+.neon-frame:hover{
+  border-color: rgba(34,211,238,.62) !important;
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,.42),
+    0 0 60px rgba(34,211,238,.32),
+    0 0 130px rgba(168,85,247,.34) !important;
 }

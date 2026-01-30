@@ -9,39 +9,9 @@
 
   <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>?v=3">
   <link rel="icon" type="image/png" href="<?php echo e(asset('images/logopng.png')); ?>?v=3">
-  <link rel="stylesheet" href="<?php echo e(asset('overrides.css')); ?>?v=<?php echo e(time()); ?>">
-  <style>
-  .content-surface{
-    background-color: rgba(2,6,23,.92) !important;
-    border-color: rgba(255,255,255,.18) !important;
-  }
-
-  .glass{
-    background-color: rgba(2,6,23,.62) !important;
-    border-color: rgba(255,255,255,.14) !important;
-    box-shadow: 0 18px 55px rgba(0,0,0,.55) !important;
-  }
-
-  .neon-frame{
-    border-color: rgba(34,211,238,.40) !important;
-    box-shadow:
-      0 0 0 1px rgba(34,211,238,.35),
-      0 0 34px rgba(34,211,238,.28),
-      0 0 90px rgba(168,85,247,.30) !important;
-  }
-
-  .neon-frame:hover{
-    border-color: rgba(34,211,238,.62) !important;
-    box-shadow:
-      0 0 0 1px rgba(34,211,238,.42),
-      0 0 60px rgba(34,211,238,.32),
-      0 0 130px rgba(168,85,247,.34) !important;
-  }
-</style>
-
 </head>
 
-<body class="min-h-screen bg-slate-950 text-slate-100">
+<body class="min-h-screen bg-[#010014] text-slate-100">
 
 
 <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -60,7 +30,7 @@
   $ytUrl = "https://www.youtube.com/@Historiasenc%C3%B3digo";
 ?>
 
-<header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl" x-data="{open:false}">
+<header class="sticky top-0 z-40 border-b border-white/10 bg-[#040030]/80 backdrop-blur-xl" x-data="{open:false}">
   <nav class="w-full flex items-center justify-between px-4 sm:px-6 py-4">
 
     
@@ -133,20 +103,20 @@
       
       <div class="hidden sm:flex items-center gap-2 mr-1">
         <a href="<?php echo e($waHeaderUrl); ?>" target="_blank" rel="noopener" aria-label="WhatsApp"
-           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-emerald-400/40 transition">
-          <img src="<?php echo e(asset('images/pngegg.png')); ?>" alt="WhatsApp" class="h-5 w-5">
+           class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-emerald-400/40 transition">
+          <img src="<?php echo e(asset('images/pngegg.png')); ?>" alt="WhatsApp" class="h-7 w-7 icon-bright">
         </a>
 
         <a href="<?php echo e($fbUrl); ?>" target="_blank" rel="noopener" aria-label="Facebook"
-           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-sky-400/40 transition">
-          <svg class="h-5 w-5 text-sky-400" viewBox="0 0 24 24" fill="currentColor">
+           class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-sky-400/40 transition">
+          <svg class="h-7 w-7 text-sky-300 icon-bright" viewBox="0 0 24 24" fill="currentColor">
             <path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5v1.8H17l-.5 2.9h-2.4v7A10 10 0 0 0 22 12z"/>
           </svg>
         </a>
 
         <a href="<?php echo e($ytUrl); ?>" target="_blank" rel="noopener" aria-label="YouTube"
-           class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-red-400/40 transition">
-          <svg class="h-5 w-5 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+           class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-red-400/40 transition">
+          <svg class="h-7 w-7 text-red-500 icon-bright" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4A3 3 0 0 0 2.4 7.2 31.4 31.4 0 0 0 2 12a31.4 31.4 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 22 12a31.4 31.4 0 0 0-.4-4.8zM10 15.5v-7l6 3.5-6 3.5z"/>
           </svg>
         </a>
@@ -203,7 +173,7 @@
   </div>
 </main>
 
-<footer class="border-t border-white/10">
+<footer class="border-t border-white/10 bg-[#040030]/80">
   <div class="mx-auto max-w-6xl px-4 py-10 text-sm flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
     <p class="text-white/70">
       © <?php echo e(date('Y')); ?> <span class="font-semibold text-white/85">G Velarde</span>
@@ -218,4 +188,11 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
 <?php /**PATH C:\pagina-ia\resources\views/layouts/marketing.blade.php ENDPATH**/ ?>

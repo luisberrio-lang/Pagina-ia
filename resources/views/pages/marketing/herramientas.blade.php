@@ -39,7 +39,7 @@
             </div>
 
             @if($t->badge_text)
-              <span class="text-[10px] px-3 py-1 rounded-full font-extrabold shrink-0"
+              <span class="text-[10px] px-3 py-1 rounded-full font-extrabold shrink-0 badge-offer"
                     style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
                            box-shadow:0 0 10px rgba(211,255,0,.75),0 0 22px rgba(211,255,0,.45);">
                 {{ $t->badge_text }}
@@ -56,7 +56,7 @@
           </div>
 
           <div class="mt-4 text-xs text-white/50">DESDE</div>
-          <div class="text-cyan-200 font-extrabold text-xl leading-tight">
+          <div class="font-extrabold text-xl leading-tight price-accent">
             {{ $from }}
           </div>
 
@@ -65,9 +65,9 @@
                     text-white transition
                     sm:absolute sm:bottom-3 sm:right-3 sm:w-auto"
              style="background:#1D00F5;border:1px solid #1D00F5;
-                    box-shadow:0 0 10px rgba(29,0,245,.65),0 0 28px rgba(29,0,245,.45);"
-             onmouseover="this.style.background='#3A1BFF';this.style.borderColor='#3A1BFF';this.style.boxShadow='0 0 12px rgba(29,0,245,.80),0 0 36px rgba(29,0,245,.55)';"
-             onmouseout="this.style.background='#1D00F5';this.style.borderColor='#1D00F5';this.style.boxShadow='0 0 10px rgba(29,0,245,.65),0 0 28px rgba(29,0,245,.45)';">
+                    box-shadow:0 0 8px rgba(29,0,245,.55),0 0 22px rgba(29,0,245,.35);"
+             onmouseover="this.style.background='#3A1BFF';this.style.borderColor='#3A1BFF';this.style.boxShadow='0 0 10px rgba(29,0,245,.70),0 0 30px rgba(29,0,245,.45)';"
+             onmouseout="this.style.background='#1D00F5';this.style.borderColor='#1D00F5';this.style.boxShadow='0 0 8px rgba(29,0,245,.55),0 0 22px rgba(29,0,245,.35)';">
             Ver detalles y planes
           </a>
         </div>
@@ -83,7 +83,7 @@
         {{-- IZQUIERDA --}}
         <div>
           @if($activeTool->badge_text)
-            <span class="text-[12px] px-3 py-1 rounded-full font-extrabold shrink-0"
+            <span class="text-[12px] px-3 py-1 rounded-full font-extrabold shrink-0 badge-offer"
                   style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
                          box-shadow:0 0 10px rgba(211,255,0,.75),0 0 22px rgba(211,255,0,.45);">
               {{ $activeTool->badge_text }}
@@ -97,7 +97,7 @@
             <div class="mt-4 flex flex-wrap gap-2">
               @foreach($activeTool->highlights as $h)
                 <span class="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/12 px-3 py-1 text-sm text-white/85">
-                  <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                  <span class="h-2.5 w-2.5 rounded-full bg-[#25D350] shadow-[0_0_8px_rgba(37,211,80,0.75)]"></span>
                   <span class="u-minw-0">{{ $h }}</span>
                 </span>
               @endforeach
@@ -178,7 +178,7 @@
                         S/. {{ $old }}
                       </span>
 
-                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-black"
+                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-black badge-offer"
                             style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
                                    box-shadow:0 0 10px rgba(211,255,0,.85),0 0 24px rgba(211,255,0,.55);">
                         {{ $off }}% OFF

@@ -1,10 +1,9 @@
-@extends('layouts.marketing')
-@section('title', 'Inicio · GVelarde')
+<?php $__env->startSection('title', 'Inicio · GVelarde'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <section class="grid gap-10 lg:grid-cols-2 items-center">
 
-  {{-- IZQUIERDA --}}
+  
   <div>
     <div class="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs text-white/70">
       <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
@@ -20,13 +19,13 @@
     </p>
 
     <div class="mt-7 flex flex-wrap gap-3">
-      <a href="{{ route('herramientas') }}" class="btn-primary">Ver Planes</a>
-      <a href="{{ route('precio') }}" class="btn-tech">Ver precios</a>
+      <a href="<?php echo e(route('herramientas')); ?>" class="btn-primary">Ver Planes</a>
+      <a href="<?php echo e(route('precio')); ?>" class="btn-tech">Ver precios</a>
     </div>
   </div>
 
-  {{-- DERECHA --}}
-  <div class="glass rounded-3xl p-6 md:p-8 border border-white/10">
+  
+  <div class="glass hero-glass rounded-3xl p-6 md:p-8 border border-white/10">
     <div class="flex items-start justify-between gap-4">
       <div>
         <h3 class="text-lg md:text-xl font-extrabold">¿Cómo trabajamos?</h3>
@@ -45,10 +44,10 @@
 
     </div>
 
-    {{-- Cards --}}
+    
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
-      {{-- 1 --}}
+      
       <div class="neon-frame neon-gold">
         <div class="neon-inner rounded-2xl p-5 h-full flex flex-col min-h-[260px]">
           <div class="flex items-start justify-between gap-3">
@@ -79,7 +78,7 @@
         </div>
       </div>
 
-      {{-- 2 --}}
+      
       <div class="neon-frame">
         <div class="neon-inner rounded-2xl p-5 h-full flex flex-col min-h-[260px]">
           <div class="flex items-start justify-between gap-3">
@@ -110,7 +109,7 @@
         </div>
       </div>
 
-      {{-- 3 --}}
+      
       <div class="neon-frame neon-purple sm:col-span-2 lg:col-span-1">
         <div class="neon-inner rounded-2xl p-5 h-full flex flex-col min-h-[260px]">
           <div class="flex items-start justify-between gap-3">
@@ -145,7 +144,7 @@
   </div>
 </section>
 
-{{-- VIDEO --}}
+
 <section class="mt-12">
   <div class="neon-frame">
     <div class="neon-inner p-6 md:p-8">
@@ -159,6 +158,7 @@
           <iframe
             src="https://www.youtube.com/embed/bv0NZv_Wq04"
             title="Video de YouTube"
+            
             style="position:absolute;inset:0;width:100%;height:100%;border:0;"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -172,4 +172,6 @@
     </div>
   </div>
 </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.marketing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\pagina-ia\resources\views/pages/marketing/inicio.blade.php ENDPATH**/ ?>
