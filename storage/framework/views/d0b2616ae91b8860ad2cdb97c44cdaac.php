@@ -28,10 +28,32 @@
       <?php
         $from = $t->price_monthly ? 'S/. '.number_format($t->price_monthly, 0).' mensual' : 'Consultar';
         $isActive = $activeTool && $activeTool->id === $t->id;
+        $toolMediaVersion = null;
+        if ($t->media_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($t->media_path)) {
+          $toolMediaVersion = \Illuminate\Support\Facades\Storage::disk('public')->lastModified($t->media_path);
+        }
+        $toolMediaVersion = $toolMediaVersion ?? ($t->updated_at?->timestamp ?? time());
+        $toolMediaUrl = ($t->media_active && $t->media_path)
+          ? asset('storage/' . $t->media_path) . '?v=' . $toolMediaVersion
+          : null;
+        $toolMediaIsVideo = $t->media_mime && \Illuminate\Support\Str::startsWith($t->media_mime, 'video/');
       ?>
 
       <div class="neon-frame <?php echo e($isActive ? 'neon-selected' : ''); ?>">
         <div class="neon-inner relative p-4 sm:p-5 pb-12 min-h-[175px]">
+          <?php if($toolMediaUrl): ?>
+            <div class="mb-4 rounded-xl border border-white/10 bg-white/5 p-2 media-fire-frame">
+              <div class="relative min-h-[150px] flex items-center justify-center">
+                <?php if($toolMediaIsVideo): ?>
+                  <video class="media-card__media" src="<?php echo e($toolMediaUrl); ?>" muted loop playsinline autoplay preload="metadata"></video>
+                <?php else: ?>
+                  <img class="media-card__media" src="<?php echo e($toolMediaUrl); ?>" alt="Animación del pack"
+                       loading="lazy" decoding="async">
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
           <div class="flex items-center justify-between gap-2">
             <div class="text-xs text-white/70 font-semibold uppercase tracking-wide">
               <?php echo e($t->tag ?? 'PACK'); ?>
@@ -179,18 +201,20 @@
                   </div>
 
                   
-                  <?php if($hasPrice && $hasOld && $off): ?>
+                  <?php if($hasOld): ?>
                     <div class="mt-2 inline-flex items-center gap-2 flex-nowrap whitespace-nowrap">
                       <span class="text-xs text-white/55 line-through whitespace-nowrap shrink-0">
                         S/. <?php echo e($old); ?>
 
                       </span>
 
-                      <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-black badge-offer"
-                            style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
-                                   box-shadow:0 0 10px rgba(211,255,0,.85),0 0 24px rgba(211,255,0,.55);">
-                        <?php echo e($off); ?>% OFF
-                      </span>
+                      <?php if($off): ?>
+                        <span class="text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 font-semibold tracking-wide text-black badge-offer"
+                              style="background:#D3FF00;border:1px solid #D3FF00;color:#000;
+                                     box-shadow:0 0 10px rgba(211,255,0,.85),0 0 24px rgba(211,255,0,.55);">
+                          <?php echo e($off); ?>% OFF
+                        </span>
+                      <?php endif; ?>
                     </div>
                   <?php endif; ?>
 

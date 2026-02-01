@@ -18,6 +18,7 @@ class Tool extends Model
         'off_monthly','off_bimestral','off_trimestral','off_semestral','off_anual',
         'off_mensual',
         'sort_order','is_active',
+        'media_path','media_mime','media_original_name','media_size_bytes','media_active',
     ];
 
     protected $casts = [
@@ -50,6 +51,7 @@ class Tool extends Model
         'off_semestral'  => 'integer',
         'off_anual'      => 'integer',
         'off_mensual'    => 'integer',
+        'media_active'   => 'boolean',
     ];
 
     public function getOldPriceMonthlyAttribute(): ?string

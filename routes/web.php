@@ -53,7 +53,11 @@ Route::middleware(['auth', 'admin'])
 
         Route::post('/tools', [DashboardController::class, 'storeTool'])->name('tools.store');
         Route::put('/tools/{tool}', [DashboardController::class, 'updateTool'])->name('tools.update');
+        Route::post('/tools/{tool}/media', [DashboardController::class, 'updateToolMedia'])->name('tools.media');
+        Route::delete('/tools/{tool}/media', [DashboardController::class, 'deleteToolMedia'])->name('tools.media.delete');
         Route::delete('/tools/{tool}', [DashboardController::class, 'destroyTool'])->name('tools.destroy');
+        Route::post('/media/tools-top', [DashboardController::class, 'updateTopMedia'])->name('media.tools-top');
+        Route::delete('/media/tools-top', [DashboardController::class, 'deleteTopMedia'])->name('media.tools-top.delete');
 
         Route::get('/tickets', [TicketController::class, 'index'])->name('tickets');
     });

@@ -35,3 +35,67 @@ Alpine.start();
 
   requestAnimationFrame(loop);
 })();
+
+// Lazy-load media (video) when visible to keep pages light
+(() => {
+  const mediaEls = document.querySelectorAll('[data-media-src]');
+  if (!mediaEls.length) return;
+
+  const loadMedia = (el) => {
+    if (el.dataset.mediaLoaded === '1') return;
+    const src = el.getAttribute('data-media-src');
+    if (src && el.getAttribute('src') !== src) {
+      el.setAttribute('src', src);
+    }
+    el.dataset.mediaLoaded = '1';
+    el.load?.();
+    el.play?.().catch(() => {});
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    mediaEls.forEach(loadMedia);
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      loadMedia(entry.target);
+      obs.unobserve(entry.target);
+    });
+  }, { rootMargin: '120px 0px' });
+
+  mediaEls.forEach((el) => observer.observe(el));
+})();
+
+// Robust video load/retry to avoid blank frames on refresh.
+(() => {
+  const videos = document.querySelectorAll('video.media-card__media');
+  if (!videos.length) return;
+
+  videos.forEach((video) => {
+    let retried = false;
+
+    const tryPlay = () => {
+      video.play?.().catch(() => {});
+    };
+
+    const retry = () => {
+      if (retried) return;
+      retried = true;
+      const src = video.getAttribute('src');
+      if (!src) return;
+      const sep = src.includes('?') ? '&' : '?';
+      video.setAttribute('src', `${src}${sep}r=${Date.now()}`);
+      video.load?.();
+      tryPlay();
+    };
+
+    video.addEventListener('loadedmetadata', tryPlay, { once: true });
+    video.addEventListener('error', retry);
+    video.addEventListener('stalled', retry);
+    video.addEventListener('suspend', () => {
+      if (video.readyState < 2) retry();
+    });
+  });
+})();

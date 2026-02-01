@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -17,6 +19,18 @@ class DashboardController extends Controller
 
     public function storeTool(Request $request)
     {
+        $rawUpload = $request->files->get('media');
+        if ($request->files->has('media') && (!$rawUpload || !$rawUpload->isValid())) {
+            $code = $rawUpload ? $rawUpload->getError() : 'desconocido';
+            return back()->withErrors(['media' => "No se pudo subir el archivo (código $code)."]);
+        }
+        if ($request->input('media_selected') && !$request->hasFile('media') && !$request->boolean('media_remove')) {
+            return back()->withErrors(['media' => 'No se recibió el archivo. Revisa el tamaño o vuelve a seleccionarlo.']);
+        }
+        if ($request->boolean('media_active') && !$request->hasFile('media')) {
+            return back()->withErrors(['media' => 'Selecciona un archivo para activar el video.']);
+        }
+
         $data = $this->validateTool($request);
 
         $data['is_active']  = $request->has('is_active');
@@ -29,15 +43,67 @@ class DashboardController extends Controller
         $data['extras']     = $this->parseLines($request->input('extras_text'));
         $data['includes']   = $this->parseIncludeLines($request->input('includes_text'));
 
-        unset($data['highlights_text'], $data['includes_text'], $data['extras_text']);
+        $hasFile = $request->hasFile('media');
+        $mediaData = $this->processToolMedia($request, null);
+        if (isset($mediaData['__media_error'])) {
+            return back()->withErrors(['media' => $mediaData['__media_error']]);
+        }
+        if ($hasFile && empty($mediaData['media_path'])) {
+            return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+        }
 
-        Tool::create($data);
+        if ($request->hasFile('media')) {
+            $request->session()->flash('debug_media_store', [
+                'context' => 'store',
+                'tool_id' => null,
+                'hasFile' => $request->hasFile('media'),
+                'media_path' => $mediaData['media_path'] ?? null,
+                'exists' => isset($mediaData['media_path'])
+                    ? Storage::disk('public')->exists($mediaData['media_path'])
+                    : false,
+            ]);
+        }
+
+        unset(
+            $data['highlights_text'],
+            $data['includes_text'],
+            $data['extras_text'],
+            $data['media'],
+            $data['media_active'],
+            $data['media_remove']
+        );
+
+        Tool::create(array_merge($data, $mediaData));
 
         return back()->with('status', '✅ Pack creado');
     }
 
     public function updateTool(Request $request, Tool $tool)
     {
+        $rawUpload = $request->files->get('media');
+        if ($request->files->has('media') && (!$rawUpload || !$rawUpload->isValid())) {
+            $code = $rawUpload ? $rawUpload->getError() : 'desconocido';
+            return back()->withErrors(['media' => "No se pudo subir el archivo (código $code)."]);
+        }
+        if ($request->input('media_selected') && !$request->hasFile('media') && !$request->boolean('media_remove')) {
+            return back()->withErrors(['media' => 'No se recibió el archivo. Revisa el tamaño o vuelve a seleccionarlo.']);
+        }
+        if ($request->has('media') || $request->hasFile('media') || $request->boolean('media_active')) {
+            $file = $request->file('media');
+            $request->session()->flash('debug_media', [
+                'hasFile' => $request->hasFile('media'),
+                'filePresent' => $file ? 'yes' : 'no',
+                'name' => $file ? $file->getClientOriginalName() : null,
+                'size' => $file ? $file->getSize() : null,
+                'error' => $file ? $file->getError() : null,
+                'active' => $request->boolean('media_active'),
+            ]);
+        }
+
+        if ($request->boolean('media_active') && !$request->hasFile('media') && !$tool->media_path) {
+            return back()->withErrors(['media' => 'Selecciona un archivo para activar el video.']);
+        }
+
         $data = $this->validateTool($request);
 
         $data['is_active']  = $request->has('is_active');
@@ -50,17 +116,255 @@ class DashboardController extends Controller
         $data['extras']     = $this->parseLines($request->input('extras_text'));
         $data['includes']   = $this->parseIncludeLines($request->input('includes_text'));
 
-        unset($data['highlights_text'], $data['includes_text'], $data['extras_text']);
+        $hasFile = $request->hasFile('media');
+        $mediaData = $this->processToolMedia($request, $tool);
+        \Log::info('tool_media_process_result', [
+            'tool_id' => $tool->id,
+            'media_data' => $mediaData,
+        ]);
+        if (isset($mediaData['__media_error'])) {
+            return back()->withErrors(['media' => $mediaData['__media_error']]);
+        }
+        if ($hasFile && empty($mediaData['media_path'])) {
+            return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+        }
 
-        $tool->update($data);
+        if ($request->hasFile('media')) {
+            $request->session()->flash('debug_media_store', [
+                'context' => 'update',
+                'tool_id' => $tool->id,
+                'hasFile' => $request->hasFile('media'),
+                'media_path' => $mediaData['media_path'] ?? null,
+                'exists' => isset($mediaData['media_path'])
+                    ? Storage::disk('public')->exists($mediaData['media_path'])
+                    : false,
+            ]);
+        }
+
+        unset(
+            $data['highlights_text'],
+            $data['includes_text'],
+            $data['extras_text'],
+            $data['media'],
+            $data['media_active'],
+            $data['media_remove']
+        );
+
+        $tool->update(array_merge($data, $mediaData));
 
         return back()->with('status', '✅ Pack actualizado');
     }
 
+    public function updateToolMedia(Request $request, Tool $tool)
+    {
+        \Log::info('tool_media_request', [
+            'tool_id' => $tool->id,
+            'has_media_selected' => (bool) $request->input('media_selected'),
+            'has_file' => $request->hasFile('media'),
+            'has_remove' => $request->boolean('media_remove'),
+            'has_toggle' => $request->boolean('media_toggle'),
+            'file_name' => $request->file('media')?->getClientOriginalName(),
+            'file_size' => $request->file('media')?->getSize(),
+            'file_mime' => $request->file('media')?->getClientMimeType(),
+        ]);
+        $rawUpload = $request->files->get('media');
+        if ($request->files->has('media') && (!$rawUpload || !$rawUpload->isValid())) {
+            $code = $rawUpload ? $rawUpload->getError() : 'desconocido';
+            return back()->withErrors(['media' => "No se pudo subir el archivo (código $code)."]);
+        }
+
+        $hasFile = $request->hasFile('media');
+        $hasRemove = $request->boolean('media_remove');
+        $hasToggle = $request->boolean('media_toggle');
+
+        if ($request->input('media_selected') && !$request->hasFile('media') && !$request->boolean('media_remove')) {
+            return back()->withErrors(['media' => 'No se recibió el archivo. Revisa el tamaño o vuelve a seleccionarlo.']);
+        }
+
+        if ($request->boolean('media_active') && !$request->hasFile('media') && !$tool->media_path) {
+            return back()->withErrors(['media' => 'Selecciona un archivo para activar el video.']);
+        }
+
+        if (!$hasFile && !$hasRemove && !$hasToggle) {
+            return back()->withErrors(['media' => 'No se detectó ningún cambio. Selecciona un archivo o marca eliminar.']);
+        }
+
+        $data = $request->validate([
+            'media' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,image/gif', 'max:8192'],
+            'media_active' => ['nullable', 'boolean'],
+            'media_remove' => ['nullable', 'boolean'],
+            'media_selected' => ['nullable'],
+            'media_toggle' => ['nullable', 'boolean'],
+        ]);
+
+        $mediaData = $this->processToolMedia($request, $tool);
+        if (isset($mediaData['__media_error'])) {
+            return back()->withErrors(['media' => $mediaData['__media_error']]);
+        }
+
+        if (($hasFile || $hasRemove || $hasToggle) && !empty($mediaData)) {
+            $tool->update($mediaData);
+            \Log::info('tool_media_updated', [
+                'tool_id' => $tool->id,
+                'saved_path' => $tool->media_path,
+                'saved_active' => $tool->media_active,
+            ]);
+        }
+
+        return back()
+            ->with('status', '✅ Video del pack actualizado')
+            ->with('status_media_tool_id', $tool->id);
+    }
+
+    public function deleteToolMedia(Tool $tool)
+    {
+        if ($tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
+            Storage::disk('public')->delete($tool->media_path);
+        }
+
+        $tool->update([
+            'media_path' => null,
+            'media_mime' => null,
+            'media_original_name' => null,
+            'media_size_bytes' => null,
+            'media_active' => false,
+        ]);
+
+        return back()
+            ->with('status', '✅ Video eliminado')
+            ->with('status_media_tool_id', $tool->id);
+    }
+
     public function destroyTool(Tool $tool)
     {
+        if ($tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
+            Storage::disk('public')->delete($tool->media_path);
+        }
         $tool->delete();
         return back()->with('status', '🗑️ Pack eliminado');
+    }
+
+    public function updateTopMedia(Request $request)
+    {
+        $data = $request->validate([
+            'media' => [
+                'nullable',
+                'file',
+                'mimetypes:video/mp4,video/webm,image/gif',
+                'max:8192',
+            ],
+            'active' => ['nullable', 'boolean'],
+        ]);
+
+        // Auto-activate when a new file is uploaded to avoid "uploaded but hidden" confusion.
+        $active = $request->hasFile('media') ? true : $request->boolean('active');
+        $existing = SiteMedia::where('key', 'tools_top_media')->first();
+
+        if (!$request->hasFile('media') && !$existing) {
+            return back()->with('status', 'Info: sube un video para activar la tarjeta');
+        }
+
+        if ($request->hasFile('media')) {
+            $file = $data['media'];
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'mp4');
+            $name = 'tools-top-' . Str::uuid() . '.' . $ext;
+
+            $path = $file->storeAs('media', $name, 'public');
+
+            if ($existing && $existing->path && Storage::disk('public')->exists($existing->path)) {
+                Storage::disk('public')->delete($existing->path);
+            }
+
+            SiteMedia::updateOrCreate(
+                ['key' => 'tools_top_media'],
+                [
+                    'path' => $path,
+                    'mime' => $file->getClientMimeType(),
+                    'original_name' => $file->getClientOriginalName(),
+                    'size_bytes' => $file->getSize(),
+                    'active' => $active,
+                ]
+            );
+        } elseif ($existing) {
+            $existing->update(['active' => $active]);
+        }
+
+        return back()->with('status', 'Video actualizado');
+    }
+
+    public function deleteTopMedia()
+    {
+        $existing = SiteMedia::where('key', 'tools_top_media')->first();
+        if ($existing) {
+            if ($existing->path && Storage::disk('public')->exists($existing->path)) {
+                Storage::disk('public')->delete($existing->path);
+            }
+            $existing->delete();
+        }
+
+        return back()->with('status', 'Video eliminado');
+    }
+
+    private function processToolMedia(Request $request, ?Tool $tool = null): array
+    {
+        $out = [];
+        $hasFile = $request->hasFile('media');
+        $remove = $request->boolean('media_remove');
+        // Auto-activate when uploading a new file so it appears on the site immediately.
+        $toggleRequested = $request->boolean('media_toggle');
+        $active = $hasFile ? true : ($toggleRequested ? $request->boolean('media_active') : ($tool?->media_active ?? false));
+
+        if ($remove && !$hasFile && $tool && $tool->media_path) {
+            if (Storage::disk('public')->exists($tool->media_path)) {
+                Storage::disk('public')->delete($tool->media_path);
+            }
+            return [
+                'media_path' => null,
+                'media_mime' => null,
+                'media_original_name' => null,
+                'media_size_bytes' => null,
+                'media_active' => false,
+            ];
+        }
+
+        if ($hasFile) {
+            $file = $request->file('media');
+            if (!$file || !$file->isValid()) {
+                return ['__media_error' => 'No se pudo subir el archivo. Intenta nuevamente.'];
+            }
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'mp4');
+            $name = 'tool-media-' . Str::uuid() . '.' . $ext;
+            Storage::disk('public')->makeDirectory('media');
+            $path = $file->storeAs('media', $name, 'public');
+            \Log::info('tool_media_store', [
+                'tool_id' => $tool?->id,
+                'path' => $path,
+                'exists' => $path ? Storage::disk('public')->exists($path) : false,
+                'size' => $file->getSize(),
+                'mime' => $file->getClientMimeType(),
+            ]);
+            if (!$path || !Storage::disk('public')->exists($path)) {
+                return ['__media_error' => 'No se pudo guardar el archivo en el servidor.'];
+            }
+
+            if ($tool && $tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
+                Storage::disk('public')->delete($tool->media_path);
+            }
+
+            return [
+                'media_path' => $path,
+                'media_mime' => $file->getClientMimeType(),
+                'media_original_name' => $file->getClientOriginalName(),
+                'media_size_bytes' => $file->getSize(),
+                'media_active' => $active,
+            ];
+        }
+
+        if ($tool && $toggleRequested) {
+            $out['media_active'] = $active;
+        }
+
+        return $out;
     }
 
     private function validateTool(Request $request): array
@@ -103,6 +407,9 @@ class DashboardController extends Controller
 
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['nullable'],
+            'media' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,image/gif', 'max:8192'],
+            'media_active' => ['nullable', 'boolean'],
+            'media_remove' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -206,3 +513,5 @@ class DashboardController extends Controller
         return $rows;
     }
 }
+
+
