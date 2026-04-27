@@ -3,7 +3,7 @@
 
 @section('content')
 @php
-  $phone = preg_replace('/\D+/', '', env('WHATSAPP_NUMBER', '51951386898'));
+  $phone = preg_replace('/\D+/', '', env('WHATSAPP_NUMBER', '51927736128'));
 @endphp
 
 <div class="flex items-end justify-between gap-4 flex-wrap">
@@ -27,7 +27,7 @@
   <div class="mt-8 grid gap-4 md:grid-cols-3">
     @foreach($tools as $t)
       @php
-        $from = $t->price_monthly ? 'S/. '.number_format($t->price_monthly, 0).' mensual' : 'Consultar';
+        $from = $t->price_monthly ? '$'.number_format($t->price_monthly, 0).' mensual' : 'Consultar';
         $isActive = $activeTool && $activeTool->id === $t->id;
         $toolMediaVersion = null;
         if ($t->media_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($t->media_path)) {
@@ -90,7 +90,7 @@
                     box-shadow:0 0 8px rgba(29,0,245,.55),0 0 22px rgba(29,0,245,.35);"
              onmouseover="this.style.background='#3A1BFF';this.style.borderColor='#3A1BFF';this.style.boxShadow='0 0 10px rgba(29,0,245,.70),0 0 30px rgba(29,0,245,.45)';"
              onmouseout="this.style.background='#1D00F5';this.style.borderColor='#1D00F5';this.style.boxShadow='0 0 8px rgba(29,0,245,.55),0 0 22px rgba(29,0,245,.35)';">
-            Ver detalles y planes
+            LISTA y PRECIOS de IAs
           </a>
         </div>
       </div>
@@ -197,7 +197,7 @@
                   @if($hasOld)
                     <div class="mt-2 inline-flex items-center gap-2 flex-nowrap whitespace-nowrap">
                       <span class="text-xs text-white/55 line-through whitespace-nowrap shrink-0">
-                        S/. {{ $old }}
+                        $ {{ $old }}
                       </span>
 
                       @if($off)
@@ -214,13 +214,13 @@
                   <div class="mt-2">
                     @if($hasPrice)
                       <div class="flex items-end gap-2 text-white leading-none">
-                        <span class="text-2xl sm:text-3xl font-bold tracking-tight">S/.</span>
+                        <span class="text-2xl sm:text-3xl font-bold tracking-tight">$</span>
                         <span class="text-4xl font-extrabold">{{ $price }}</span>
                       </div>
 
                       {{-- ✅ SUBTÍTULO CLARO --}}
                       <div class="mt-2 text-sm text-white/60">
-                        S/. {{ $price }} {{ $p['period'] }}
+                        $ {{ $price }} {{ $p['period'] }}
                       </div>
                     @else
                       <div class="text-3xl font-extrabold text-cyan-200 leading-none">

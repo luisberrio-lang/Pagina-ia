@@ -97,7 +97,7 @@
           <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Referencia</span>
 
-            <a href="https://whatsapp.com/channel/0029Vb70a5sJuyAHgnr9Tw1C" target="_blank" rel="noopener"
+            <a href="https://whatsapp.com/channel/0029VbCYZRb5q08beYH3VB3Z" target="_blank" rel="noopener"
                class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
                       text-white transition whitespace-nowrap"
                style="background:#05F545;"
@@ -128,7 +128,7 @@
           <div class="mt-auto w-full pt-4 flex flex-col items-center gap-2 text-center">
             <span class="text-white/45 text-xs">Acceso</span>
 
-            <a href="https://chat.whatsapp.com/Bb3rE91HltALEzI6ccdLp5" target="_blank" rel="noopener"
+            <a href="https://chat.whatsapp.com/BvoNG1AeEyo8JEhmMU36Zy" target="_blank" rel="noopener"
                class="inline-flex min-w-[120px] items-center justify-center rounded-lg px-4 py-1.5 text-xs font-semibold
                       text-white transition whitespace-nowrap"
                style="background:#05F545;border:1px solid #05F545;"
