@@ -1,15 +1,12 @@
 @extends('layouts.marketing')
-@section('title', 'Precios · Pagina-IA')
+@section('title', 'Precios Â· Pagina-IA')
 
 @section('content')
 @php
-    // Si no hay herramientas, evitamos errores
     $activeTool = $activeTool ?? null;
 
-    // WhatsApp
     $phone = preg_replace('/\D+/', '', config('services.whatsapp.number', env('WHATSAPP_NUMBER', '51978350894')));
 
-    // Helpers para listas (sirve si guardas arrays o texto por líneas)
     $toList = function ($value) {
         if (is_array($value)) return array_values(array_filter($value));
         if (is_string($value) && trim($value) !== '') {
@@ -28,44 +25,42 @@
     <a href="{{ route('herramientas') }}" class="btn-tech">Volver</a>
 </div>
 
-{{-- Selector superior (tipo tabs/cards) --}}
 @if($tools->count())
     <div class="mt-6 flex gap-3 overflow-x-auto pb-2">
         @foreach($tools as $t)
             @php
                 $isActive = $activeTool && $activeTool->id === $t->id;
+                $toolCurrencySymbol = $t->currency_symbol ?? (($t->currency ?? 'PEN') === 'USD' ? '$' : 'S/');
             @endphp
             <a href="{{ route('precio', ['tool' => $t->id]) }}"
                class="shrink-0 glass rounded-2xl px-4 py-3 border
                       {{ $isActive ? 'border-cyan-300/60' : 'border-white/10' }}">
                 <div class="text-xs text-white/60">{{ $t->tag ?? 'IA' }}</div>
                 <div class="font-semibold">{{ $t->title }}</div>
-                <div class="text-xs text-white/60 mt-1 line-clamp-1">{{ $t->subtitle }}</div>
+                <div class="text-xs text-white/60 mt-1 line-clamp-1">
+                    {{ $toolCurrencySymbol }} {{ $t->price_monthly ?? $t->price ?? 'Consultar' }}
+                </div>
             </a>
         @endforeach
     </div>
 @endif
 
-{{-- Detalle principal --}}
 @if($activeTool)
     @php
-        // Campos nuevos (si aún no existen en tu tabla, simplemente saldrán null y no rompen nada)
         $badge = $activeTool->badge_text ?? null;
         $short = $activeTool->short_desc ?? null;
-
         $highlights = $toList($activeTool->highlights ?? null);
         $includes   = $toList($activeTool->includes ?? null);
         $extras     = $toList($activeTool->extras ?? null);
 
-        // Precios (fallback al campo antiguo price)
         $monthly   = $activeTool->price_monthly ?? $activeTool->price ?? null;
         $semestral = $activeTool->price_semestral ?? null;
         $anual     = $activeTool->price_anual ?? null;
+        $currencySymbol = $activeTool->currency_symbol ?? (($activeTool->currency ?? 'PEN') === 'USD' ? '$' : 'S/');
 
         $saveSem   = $activeTool->savings_semestral ?? null;
         $saveAnual = $activeTool->savings_anual ?? null;
 
-        // Mensaje WhatsApp
         $msg = "Hola, quiero contratar: {$activeTool->title}";
         $waUrl = "https://wa.me/{$phone}?text=" . urlencode($msg);
     @endphp
@@ -94,7 +89,6 @@
                     <p class="mt-4 text-white/70">{{ $short }}</p>
                 @endif
 
-                {{-- Highlights tipo chips --}}
                 @if(count($highlights))
                     <div class="mt-5 flex flex-wrap gap-2">
                         @foreach($highlights as $h)
@@ -105,7 +99,6 @@
                     </div>
                 @endif
 
-                {{-- Incluye / Extras (si no usas arrays todavía, puedes usar details por líneas) --}}
                 @php
                     $detailsLines = $toList($activeTool->details ?? null);
                 @endphp
@@ -137,38 +130,34 @@
                 @endif
             </div>
 
-            {{-- Panel de precios a la derecha --}}
             <div class="w-full max-w-md">
                 <div class="text-xs tracking-widest text-white/50 mb-3">PRECIOS DEL PLAN</div>
 
                 <div class="grid gap-3 sm:grid-cols-3">
-                    {{-- Anual --}}
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                         <div class="text-xs text-white/70">ANUAL</div>
                         <div class="text-2xl font-extrabold mt-2">
-                            {{ $anual ?? '—' }}
+                            {{ $currencySymbol }} {{ $anual ?? '—' }}
                         </div>
                         @if($saveAnual)
-                            <div class="text-xs text-emerald-300 mt-1">ahorras {{ $saveAnual }}</div>
+                            <div class="text-xs text-emerald-300 mt-1">ahorras {{ $currencySymbol }} {{ $saveAnual }}</div>
                         @endif
                     </div>
 
-                    {{-- Semestral --}}
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                         <div class="text-xs text-white/70">SEMESTRAL</div>
                         <div class="text-2xl font-extrabold mt-2">
-                            {{ $semestral ?? '—' }}
+                            {{ $currencySymbol }} {{ $semestral ?? '—' }}
                         </div>
                         @if($saveSem)
-                            <div class="text-xs text-emerald-300 mt-1">ahorras {{ $saveSem }}</div>
+                            <div class="text-xs text-emerald-300 mt-1">ahorras {{ $currencySymbol }} {{ $saveSem }}</div>
                         @endif
                     </div>
 
-                    {{-- Mensual --}}
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                         <div class="text-xs text-white/70">MENSUAL</div>
                         <div class="text-2xl font-extrabold mt-2">
-                            {{ $monthly ?? 'Consultar' }}
+                            {{ $currencySymbol }} {{ $monthly ?? 'Consultar' }}
                         </div>
                     </div>
                 </div>
@@ -179,7 +168,7 @@
                    style="background:#25D350;box-shadow:0 0 12px rgba(37,211,80,.55),0 0 28px rgba(37,211,80,.30);"
                    onmouseover="this.style.background='#35E062';"
                    onmouseout="this.style.background='#25D350';">
-                    <img src="{{ asset('images/pngegg.png') }}" alt="WhatsApp" class="h-5 w-5">
+                    <img src="{{ asset('images/pngegg.webp') }}" alt="WhatsApp" class="h-5 w-5" loading="lazy" decoding="async">
                     QUIERO ESTE PLAN por WhatsApp
                 </a>
 

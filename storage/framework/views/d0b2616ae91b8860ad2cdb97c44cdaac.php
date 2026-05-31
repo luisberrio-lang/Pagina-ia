@@ -10,7 +10,6 @@
     <h2 class="text-3xl font-extrabold">Herramientas IA</h2>
     <p class="text-white/70 mt-2">Elige un pack y revisa planes, detalles y beneficios.</p>
   </div>
-  <a href="<?php echo e(route('soporte')); ?>" class="btn-tech">Soporte</a>
 </div>
 
 <?php if($tools->isEmpty()): ?>
@@ -21,12 +20,14 @@
   </div>
 <?php else: ?>
   <?php $activeTool = $activeTool ?? $tools->first(); ?>
+  <?php $activeToolCurrencySymbol = $activeTool ? ($activeTool->currency_symbol ?? (($activeTool->currency ?? 'PEN') === 'USD' ? '$' : 'S/')) : 'S/'; ?>
 
   
   <div class="mt-8 grid gap-4 md:grid-cols-3">
     <?php $__currentLoopData = $tools; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
       <?php
-        $from = $t->price_monthly ? '$'.number_format($t->price_monthly, 0).' mensual' : 'Consultar';
+        $currencySymbol = $t->currency_symbol ?? (($t->currency ?? 'PEN') === 'USD' ? '$' : 'S/');
+        $from = $t->price_monthly ? $currencySymbol.' '.number_format($t->price_monthly, 0).' mensual' : 'Consultar';
         $isActive = $activeTool && $activeTool->id === $t->id;
         $toolMediaVersion = null;
         if ($t->media_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($t->media_path)) {
@@ -45,7 +46,7 @@
             <div class="mb-4 rounded-xl border border-white/10 bg-white/5 p-2 media-fire-frame">
               <div class="relative min-h-[150px] flex items-center justify-center">
                 <?php if($toolMediaIsVideo): ?>
-                  <video class="media-card__media" src="<?php echo e($toolMediaUrl); ?>" muted loop playsinline autoplay preload="metadata"></video>
+                  <video class="media-card__media" src="<?php echo e($toolMediaUrl); ?>" autoplay muted loop playsinline preload="metadata"></video>
                 <?php else: ?>
                   <img class="media-card__media" src="<?php echo e($toolMediaUrl); ?>" alt="Animación del pack"
                        loading="lazy" decoding="async">
@@ -204,7 +205,7 @@
                   <?php if($hasOld): ?>
                     <div class="mt-2 inline-flex items-center gap-2 flex-nowrap whitespace-nowrap">
                       <span class="text-xs text-white/55 line-through whitespace-nowrap shrink-0">
-                        $ <?php echo e($old); ?>
+                        <?php echo e($activeToolCurrencySymbol); ?> <?php echo e($old); ?>
 
                       </span>
 
@@ -222,13 +223,13 @@
                   <div class="mt-2">
                     <?php if($hasPrice): ?>
                       <div class="flex items-end gap-2 text-white leading-none">
-                        <span class="text-2xl sm:text-3xl font-bold tracking-tight">$</span>
+                        <span class="text-2xl sm:text-3xl font-bold tracking-tight"><?php echo e($activeToolCurrencySymbol); ?></span>
                         <span class="text-4xl font-extrabold"><?php echo e($price); ?></span>
                       </div>
 
                       
                       <div class="mt-2 text-sm text-white/60">
-                        $ <?php echo e($price); ?> <?php echo e($p['period']); ?>
+                        <?php echo e($activeToolCurrencySymbol); ?> <?php echo e($price); ?> <?php echo e($p['period']); ?>
 
                       </div>
                     <?php else: ?>
@@ -266,7 +267,7 @@
                style="background:#25D350;box-shadow:0 0 12px rgba(37,211,80,.55),0 0 28px rgba(37,211,80,.30);"
                onmouseover="this.style.background='#35E062';"
                onmouseout="this.style.background='#25D350';">
-              <img src="<?php echo e(asset('images/pngegg.png')); ?>" alt="WhatsApp" class="h-6 w-6">
+              <img src="<?php echo e(asset('images/pngegg.webp')); ?>" alt="WhatsApp" class="h-6 w-6" loading="lazy" decoding="async">
               Contratar por WhatsApp
             </a>
           </div>

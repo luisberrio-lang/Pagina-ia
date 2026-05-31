@@ -77,6 +77,7 @@ Alpine.start();
     let retried = false;
 
     const tryPlay = () => {
+      if (!video.hasAttribute('autoplay')) return;
       video.play?.().catch(() => {});
     };
 

@@ -4,9 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\SupportTicketController;
-
-use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\DashboardController;
 
 /*
@@ -17,12 +14,7 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::get('/', [PageController::class, 'inicio'])->name('inicio');
 Route::get('/herramientas-ia', [PageController::class, 'herramientas'])->name('herramientas');
 Route::get('/precio', [PageController::class, 'precio'])->name('precio');
-Route::get('/soporte', [PageController::class, 'soporte'])->name('soporte');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-
-Route::post('/soporte', [SupportTicketController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('soporte.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -58,8 +50,6 @@ Route::middleware(['auth', 'admin'])
         Route::delete('/tools/{tool}', [DashboardController::class, 'destroyTool'])->name('tools.destroy');
         Route::post('/media/tools-top', [DashboardController::class, 'updateTopMedia'])->name('media.tools-top');
         Route::delete('/media/tools-top', [DashboardController::class, 'deleteTopMedia'])->name('media.tools-top.delete');
-
-        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets');
     });
 use App\Http\Controllers\ProfileController;
 

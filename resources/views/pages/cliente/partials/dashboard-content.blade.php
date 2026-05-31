@@ -4,7 +4,6 @@
             <p class=\"text-gray-700\">Bienvenido, {{ auth()->user()->name }} ✅</p>
             <div class=\"mt-4 flex gap-4 flex-wrap\">
                 <a class=\"underline text-indigo-600\" href=\"{{ route('herramientas') }}\">Ver herramientas</a>
-                <a class=\"underline text-indigo-600\" href=\"{{ route('soporte') }}\">Soporte</a>
             </div>
         </div>
     </div>

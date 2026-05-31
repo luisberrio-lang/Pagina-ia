@@ -18,12 +18,6 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    {{-- SOLO ADMIN: Tickets --}}
-                    @if(auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin())
-                        <x-nav-link :href="route('admin.tickets')" :active="request()->routeIs('admin.tickets')">
-                            {{ __('Tickets') }}
-                        </x-nav-link>
-                    @endif
                 </div>
             </div>
 
@@ -76,11 +70,6 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @if(auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin())
-                <x-responsive-nav-link :href="route('admin.tickets')" :active="request()->routeIs('admin.tickets')">
-                    {{ __('Tickets') }}
-                </x-responsive-nav-link>
-            @endif
         </div>
 
         <!-- Responsive Settings Options -->

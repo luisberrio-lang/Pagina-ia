@@ -3,14 +3,32 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SiteMedia;
 use App\Models\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Throwable;
 
 class DashboardController extends Controller
 {
+    private const MEDIA_MAX_KB = 40960;
+    private const IMAGE_MAX_WIDTH = 900;
+    private const IMAGE_MAX_HEIGHT = 500;
+    private const IMAGE_WEBP_QUALITY = 75;
+    private const VIDEO_MIN_SECONDS = 3;
+    private const VIDEO_MAX_SECONDS = 30;
+    private const MEDIA_MIMES = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+        'video/mp4',
+        'video/webm',
+    ];
+
     public function index()
     {
         $tools = Tool::orderBy('sort_order')->orderByDesc('id')->get();
@@ -35,6 +53,7 @@ class DashboardController extends Controller
 
         $data['is_active']  = $request->has('is_active');
         $data['sort_order'] = $data['sort_order'] ?? 0;
+        $data['currency']   = $data['currency'] ?? 'PEN';
 
         $data = $this->normalizeOldPrices($data, $request);
         $data = $this->normalizeOffValues($data, $request);
@@ -44,12 +63,21 @@ class DashboardController extends Controller
         $data['includes']   = $this->parseIncludeLines($request->input('includes_text'));
 
         $hasFile = $request->hasFile('media');
-        $mediaData = $this->processToolMedia($request, null);
-        if (isset($mediaData['__media_error'])) {
-            return back()->withErrors(['media' => $mediaData['__media_error']]);
-        }
-        if ($hasFile && empty($mediaData['media_path'])) {
-            return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+        try {
+            $mediaData = $this->processToolMedia($request, null);
+            if (isset($mediaData['__media_error'])) {
+                return back()->withErrors(['media' => $mediaData['__media_error']]);
+            }
+            if ($hasFile && empty($mediaData['media_path'])) {
+                return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+            }
+        } catch (Throwable $e) {
+            \Log::error('tool_media_store_failed', [
+                'context' => 'store',
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors(['media' => 'No se pudo guardar el archivo multimedia. Revisa el formato o intenta con un archivo más liviano.']);
         }
 
         if ($request->hasFile('media')) {
@@ -59,7 +87,7 @@ class DashboardController extends Controller
                 'hasFile' => $request->hasFile('media'),
                 'media_path' => $mediaData['media_path'] ?? null,
                 'exists' => isset($mediaData['media_path'])
-                    ? Storage::disk('public')->exists($mediaData['media_path'])
+                    ? $this->mediaPathExists($mediaData['media_path'])
                     : false,
             ]);
         }
@@ -73,9 +101,17 @@ class DashboardController extends Controller
             $data['media_remove']
         );
 
-        Tool::create(array_merge($data, $mediaData));
+        try {
+            $tool = Tool::create(array_merge($data, $mediaData));
+        } catch (Throwable $e) {
+            \Log::error('tool_create_failed', [
+                'message' => $e->getMessage(),
+            ]);
 
-        return back()->with('status', '✅ Pack creado');
+            return back()->withErrors(['pack' => 'No se pudo guardar el pack. Revisa los datos e intenta nuevamente.']);
+        }
+
+        return back()->with($this->packFlashMessages($tool, $mediaData, $hasFile, 'creado'));
     }
 
     public function updateTool(Request $request, Tool $tool)
@@ -108,6 +144,7 @@ class DashboardController extends Controller
 
         $data['is_active']  = $request->has('is_active');
         $data['sort_order'] = $data['sort_order'] ?? 0;
+        $data['currency']   = $data['currency'] ?? ($tool->currency ?? 'PEN');
 
         $data = $this->normalizeOldPrices($data, $request);
         $data = $this->normalizeOffValues($data, $request);
@@ -117,16 +154,26 @@ class DashboardController extends Controller
         $data['includes']   = $this->parseIncludeLines($request->input('includes_text'));
 
         $hasFile = $request->hasFile('media');
-        $mediaData = $this->processToolMedia($request, $tool);
-        \Log::info('tool_media_process_result', [
-            'tool_id' => $tool->id,
-            'media_data' => $mediaData,
-        ]);
-        if (isset($mediaData['__media_error'])) {
-            return back()->withErrors(['media' => $mediaData['__media_error']]);
-        }
-        if ($hasFile && empty($mediaData['media_path'])) {
-            return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+        try {
+            $mediaData = $this->processToolMedia($request, $tool);
+            \Log::info('tool_media_process_result', [
+                'tool_id' => $tool->id,
+                'media_data' => $mediaData,
+            ]);
+            if (isset($mediaData['__media_error'])) {
+                return back()->withErrors(['media' => $mediaData['__media_error']]);
+            }
+            if ($hasFile && empty($mediaData['media_path'])) {
+                return back()->withErrors(['media' => 'No se pudo guardar el archivo. Intenta nuevamente.']);
+            }
+        } catch (Throwable $e) {
+            \Log::error('tool_media_store_failed', [
+                'context' => 'update',
+                'tool_id' => $tool->id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors(['media' => 'No se pudo guardar el archivo multimedia. Revisa el formato o intenta con un archivo más liviano.']);
         }
 
         if ($request->hasFile('media')) {
@@ -136,7 +183,7 @@ class DashboardController extends Controller
                 'hasFile' => $request->hasFile('media'),
                 'media_path' => $mediaData['media_path'] ?? null,
                 'exists' => isset($mediaData['media_path'])
-                    ? Storage::disk('public')->exists($mediaData['media_path'])
+                    ? $this->mediaPathExists($mediaData['media_path'])
                     : false,
             ]);
         }
@@ -150,9 +197,19 @@ class DashboardController extends Controller
             $data['media_remove']
         );
 
-        $tool->update(array_merge($data, $mediaData));
+        try {
+            $tool->update(array_merge($data, $mediaData));
+            $tool->refresh();
+        } catch (Throwable $e) {
+            \Log::error('tool_update_failed', [
+                'tool_id' => $tool->id,
+                'message' => $e->getMessage(),
+            ]);
 
-        return back()->with('status', '✅ Pack actualizado');
+            return back()->withErrors(['pack' => 'No se pudo actualizar el pack. Revisa los datos e intenta nuevamente.']);
+        }
+
+        return back()->with($this->packFlashMessages($tool, $mediaData, $hasFile, 'actualizado'));
     }
 
     public function updateToolMedia(Request $request, Tool $tool)
@@ -190,20 +247,40 @@ class DashboardController extends Controller
         }
 
         $data = $request->validate([
-            'media' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,image/gif', 'max:8192'],
+            'media' => ['nullable', 'file', 'mimetypes:' . implode(',', self::MEDIA_MIMES), 'max:' . self::MEDIA_MAX_KB],
             'media_active' => ['nullable', 'boolean'],
             'media_remove' => ['nullable', 'boolean'],
             'media_selected' => ['nullable'],
             'media_toggle' => ['nullable', 'boolean'],
-        ]);
+        ], $this->mediaValidationMessages());
+        $data['media_active'] = $request->boolean('media_active');
 
-        $mediaData = $this->processToolMedia($request, $tool);
-        if (isset($mediaData['__media_error'])) {
-            return back()->withErrors(['media' => $mediaData['__media_error']]);
+        try {
+            $mediaData = $this->processToolMedia($request, $tool);
+            if (isset($mediaData['__media_error'])) {
+                return back()->withErrors(['media' => $mediaData['__media_error']]);
+            }
+        } catch (Throwable $e) {
+            \Log::error('tool_media_update_failed', [
+                'tool_id' => $tool->id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors(['media' => 'No se pudo guardar el archivo multimedia. Revisa el formato o intenta con un archivo más liviano.']);
         }
 
         if (($hasFile || $hasRemove || $hasToggle) && !empty($mediaData)) {
-            $tool->update($mediaData);
+            try {
+                $tool->update($mediaData);
+                $tool->refresh();
+            } catch (Throwable $e) {
+                \Log::error('tool_media_model_update_failed', [
+                    'tool_id' => $tool->id,
+                    'message' => $e->getMessage(),
+                ]);
+
+                return back()->withErrors(['media' => 'El archivo se procesó, pero no se pudo actualizar el pack. Intenta nuevamente.']);
+            }
             \Log::info('tool_media_updated', [
                 'tool_id' => $tool->id,
                 'saved_path' => $tool->media_path,
@@ -212,15 +289,13 @@ class DashboardController extends Controller
         }
 
         return back()
-            ->with('status', '✅ Video del pack actualizado')
+            ->with($this->mediaFlashMessages($tool, $mediaData, $hasFile, $hasRemove))
             ->with('status_media_tool_id', $tool->id);
     }
 
     public function deleteToolMedia(Tool $tool)
     {
-        if ($tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
-            Storage::disk('public')->delete($tool->media_path);
-        }
+        $this->deleteMediaPath($tool->media_path);
 
         $tool->update([
             'media_path' => null,
@@ -237,9 +312,7 @@ class DashboardController extends Controller
 
     public function destroyTool(Tool $tool)
     {
-        if ($tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
-            Storage::disk('public')->delete($tool->media_path);
-        }
+        $this->deleteMediaPath($tool->media_path);
         $tool->delete();
         return back()->with('status', '🗑️ Pack eliminado');
     }
@@ -250,11 +323,11 @@ class DashboardController extends Controller
             'media' => [
                 'nullable',
                 'file',
-                'mimetypes:video/mp4,video/webm,image/gif',
-                'max:8192',
+                'mimetypes:' . implode(',', self::MEDIA_MIMES),
+                'max:' . self::MEDIA_MAX_KB,
             ],
             'active' => ['nullable', 'boolean'],
-        ]);
+        ], $this->mediaValidationMessages());
 
         // Auto-activate when a new file is uploaded to avoid "uploaded but hidden" confusion.
         $active = $request->hasFile('media') ? true : $request->boolean('active');
@@ -266,22 +339,20 @@ class DashboardController extends Controller
 
         if ($request->hasFile('media')) {
             $file = $data['media'];
-            $ext = strtolower($file->getClientOriginalExtension() ?: 'mp4');
-            $name = 'tools-top-' . Str::uuid() . '.' . $ext;
-
-            $path = $file->storeAs('media', $name, 'public');
-
-            if ($existing && $existing->path && Storage::disk('public')->exists($existing->path)) {
-                Storage::disk('public')->delete($existing->path);
+            $mediaData = $this->storeOptimizedMediaFile($file, 'tools-top-');
+            if (isset($mediaData['__media_error'])) {
+                return back()->withErrors(['media' => $mediaData['__media_error']]);
             }
+
+            $this->deleteMediaPath($existing?->path);
 
             SiteMedia::updateOrCreate(
                 ['key' => 'tools_top_media'],
                 [
-                    'path' => $path,
-                    'mime' => $file->getClientMimeType(),
+                    'path' => $mediaData['path'],
+                    'mime' => $mediaData['mime'],
                     'original_name' => $file->getClientOriginalName(),
-                    'size_bytes' => $file->getSize(),
+                    'size_bytes' => $mediaData['size'],
                     'active' => $active,
                 ]
             );
@@ -296,9 +367,7 @@ class DashboardController extends Controller
     {
         $existing = SiteMedia::where('key', 'tools_top_media')->first();
         if ($existing) {
-            if ($existing->path && Storage::disk('public')->exists($existing->path)) {
-                Storage::disk('public')->delete($existing->path);
-            }
+            $this->deleteMediaPath($existing->path);
             $existing->delete();
         }
 
@@ -315,9 +384,7 @@ class DashboardController extends Controller
         $active = $hasFile ? true : ($toggleRequested ? $request->boolean('media_active') : ($tool?->media_active ?? false));
 
         if ($remove && !$hasFile && $tool && $tool->media_path) {
-            if (Storage::disk('public')->exists($tool->media_path)) {
-                Storage::disk('public')->delete($tool->media_path);
-            }
+            $this->deleteMediaPath($tool->media_path);
             return [
                 'media_path' => null,
                 'media_mime' => null,
@@ -332,30 +399,31 @@ class DashboardController extends Controller
             if (!$file || !$file->isValid()) {
                 return ['__media_error' => 'No se pudo subir el archivo. Intenta nuevamente.'];
             }
-            $ext = strtolower($file->getClientOriginalExtension() ?: 'mp4');
-            $name = 'tool-media-' . Str::uuid() . '.' . $ext;
-            Storage::disk('public')->makeDirectory('media');
-            $path = $file->storeAs('media', $name, 'public');
+            $stored = $this->storeOptimizedMediaFile($file, 'tool-media-');
+            if (isset($stored['__media_error'])) {
+                return ['__media_error' => $stored['__media_error']];
+            }
             \Log::info('tool_media_store', [
                 'tool_id' => $tool?->id,
-                'path' => $path,
-                'exists' => $path ? Storage::disk('public')->exists($path) : false,
-                'size' => $file->getSize(),
-                'mime' => $file->getClientMimeType(),
+                'path' => $stored['path'],
+                'exists' => $this->mediaPathExists($stored['path']),
+                'original_size' => $file->getSize(),
+                'stored_size' => $stored['size'],
+                'mime' => $stored['mime'],
             ]);
-            if (!$path || !Storage::disk('public')->exists($path)) {
+            if (!$this->mediaPathExists($stored['path'])) {
                 return ['__media_error' => 'No se pudo guardar el archivo en el servidor.'];
             }
 
-            if ($tool && $tool->media_path && Storage::disk('public')->exists($tool->media_path)) {
-                Storage::disk('public')->delete($tool->media_path);
+            if ($tool && $tool->media_path) {
+                $this->deleteMediaPath($tool->media_path);
             }
 
             return [
-                'media_path' => $path,
-                'media_mime' => $file->getClientMimeType(),
+                'media_path' => $stored['path'],
+                'media_mime' => $stored['mime'],
                 'media_original_name' => $file->getClientOriginalName(),
-                'media_size_bytes' => $file->getSize(),
+                'media_size_bytes' => $stored['size'],
                 'media_active' => $active,
             ];
         }
@@ -367,9 +435,295 @@ class DashboardController extends Controller
         return $out;
     }
 
+    private function storeOptimizedMediaFile(UploadedFile $file, string $prefix): array
+    {
+        $mime = $file->getClientMimeType();
+        $this->ensureMediaDirectories();
+
+        if (Str::startsWith($mime, 'image/') && $mime !== 'image/gif') {
+            return $this->storeImageAsWebp($file, $prefix);
+        }
+
+        if (Str::startsWith($mime, 'video/')) {
+            $ext = strtolower($file->getClientOriginalExtension() ?: ($mime === 'video/webm' ? 'webm' : 'mp4'));
+            $path = 'media/' . $prefix . Str::uuid() . '.' . $ext;
+            $publicPath = $this->mediaPublicPath($path);
+            $legacyPath = $this->mediaLegacyPath($path);
+
+            if (!$file->move(dirname($publicPath), basename($publicPath))) {
+                return ['__media_error' => 'No se pudo guardar el video.'];
+            }
+
+            $this->mirrorMediaFile($publicPath, $legacyPath);
+
+            return [
+                'path' => $path,
+                'mime' => $mime,
+                'size' => $this->mediaFileSize($path),
+            ];
+        }
+
+        if ($mime === 'image/gif') {
+            $path = 'media/' . $prefix . Str::uuid() . '.gif';
+            $publicPath = $this->mediaPublicPath($path);
+            $legacyPath = $this->mediaLegacyPath($path);
+
+            if (!$file->move(dirname($publicPath), basename($publicPath))) {
+                return ['__media_error' => 'No se pudo guardar el GIF.'];
+            }
+
+            $this->mirrorMediaFile($publicPath, $legacyPath);
+
+            return [
+                'path' => $path,
+                'mime' => $mime,
+                'size' => $this->mediaFileSize($path),
+            ];
+        }
+
+        return ['__media_error' => 'Formato no permitido. Usa JPG, PNG, WebP, GIF, MP4 o WebM.'];
+    }
+
+    private function storeImageAsWebp(UploadedFile $file, string $prefix): array
+    {
+        if (!function_exists('imagewebp')) {
+            return ['__media_error' => 'El servidor no tiene soporte WebP en PHP/GD.'];
+        }
+
+        $source = $this->createImageResource($file);
+        if (!$source) {
+            return ['__media_error' => 'No se pudo procesar la imagen. Usa JPG, PNG o WebP válido.'];
+        }
+
+        $sourceWidth = imagesx($source);
+        $sourceHeight = imagesy($source);
+        $target = imagecreatetruecolor(self::IMAGE_MAX_WIDTH, self::IMAGE_MAX_HEIGHT);
+        imagealphablending($target, true);
+        imagesavealpha($target, true);
+        $transparent = imagecolorallocatealpha($target, 0, 0, 0, 127);
+        imagefilledrectangle($target, 0, 0, self::IMAGE_MAX_WIDTH, self::IMAGE_MAX_HEIGHT, $transparent);
+
+        imagecopyresampled(
+            $target,
+            $source,
+            0,
+            0,
+            0,
+            0,
+            self::IMAGE_MAX_WIDTH,
+            self::IMAGE_MAX_HEIGHT,
+            $sourceWidth,
+            $sourceHeight
+        );
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'media-webp-');
+        if (!$tempPath || !imagewebp($target, $tempPath, self::IMAGE_WEBP_QUALITY)) {
+            imagedestroy($source);
+            imagedestroy($target);
+            return ['__media_error' => 'No se pudo optimizar la imagen a WebP.'];
+        }
+
+        imagedestroy($source);
+        imagedestroy($target);
+
+        $path = 'media/' . $prefix . Str::uuid() . '.webp';
+        $publicPath = $this->mediaPublicPath($path);
+        $legacyPath = $this->mediaLegacyPath($path);
+        $stored = copy($tempPath, $publicPath);
+        @unlink($tempPath);
+
+        if (!$stored) {
+            return ['__media_error' => 'No se pudo guardar la imagen optimizada.'];
+        }
+
+        $this->mirrorMediaFile($publicPath, $legacyPath);
+
+        return [
+            'path' => $path,
+            'mime' => 'image/webp',
+            'size' => $this->mediaFileSize($path),
+        ];
+    }
+
+    private function ensureMediaDirectories(): void
+    {
+        foreach ([$this->mediaPublicDirectory(), $this->mediaLegacyDirectory()] as $directory) {
+            if (!is_dir($directory)) {
+                @mkdir($directory, 0775, true);
+            }
+        }
+    }
+
+    private function mediaPublicDirectory(): string
+    {
+        return public_path('storage/media');
+    }
+
+    private function mediaLegacyDirectory(): string
+    {
+        return storage_path('app/public/media');
+    }
+
+    private function mediaPublicPath(string $relativePath): string
+    {
+        return public_path('storage/' . ltrim($relativePath, '/'));
+    }
+
+    private function mediaLegacyPath(string $relativePath): string
+    {
+        return storage_path('app/public/' . ltrim($relativePath, '/'));
+    }
+
+    private function mediaPathExists(string $relativePath): bool
+    {
+        return file_exists($this->mediaPublicPath($relativePath))
+            || file_exists($this->mediaLegacyPath($relativePath));
+    }
+
+    private function mediaFileSize(string $relativePath): int
+    {
+        $publicPath = $this->mediaPublicPath($relativePath);
+        if (file_exists($publicPath)) {
+            return (int) filesize($publicPath);
+        }
+
+        $legacyPath = $this->mediaLegacyPath($relativePath);
+        if (file_exists($legacyPath)) {
+            return (int) filesize($legacyPath);
+        }
+
+        return 0;
+    }
+
+    private function mirrorMediaFile(string $publicPath, string $legacyPath): void
+    {
+        $publicDir = dirname($publicPath);
+        $legacyDir = dirname($legacyPath);
+
+        if (!is_dir($legacyDir)) {
+            @mkdir($legacyDir, 0775, true);
+        }
+
+        $publicReal = realpath($publicDir);
+        $legacyReal = realpath($legacyDir);
+
+        if ($publicReal && $legacyReal && $publicReal === $legacyReal) {
+            return;
+        }
+
+        if (file_exists($publicPath)) {
+            @copy($publicPath, $legacyPath);
+        }
+    }
+
+    private function deleteMediaPath(?string $relativePath): void
+    {
+        if (!$relativePath) {
+            return;
+        }
+
+        $paths = array_values(array_unique([
+            $this->mediaPublicPath($relativePath),
+            $this->mediaLegacyPath($relativePath),
+        ]));
+
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+        }
+    }
+
+    private function createImageResource(UploadedFile $file)
+    {
+        $path = $file->getRealPath();
+        return match ($file->getClientMimeType()) {
+            'image/jpeg' => @imagecreatefromjpeg($path),
+            'image/png' => @imagecreatefrompng($path),
+            'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($path) : false,
+            default => false,
+        };
+    }
+
+    private function packFlashMessages(Tool $tool, array $mediaData, bool $submittedFile, string $action): array
+    {
+        $messages = [
+            $action === 'creado'
+                ? 'Pack guardado correctamente.'
+                : 'Pack actualizado correctamente.',
+        ];
+
+        $warnings = [];
+        $mediaPath = $mediaData['media_path'] ?? null;
+        $mediaMime = $mediaData['media_mime'] ?? null;
+        $mediaName = $mediaData['media_original_name'] ?? null;
+
+        if ($mediaPath) {
+            $fileLabel = $mediaName ? basename($mediaName) : basename($mediaPath);
+            if (Str::startsWith((string) $mediaMime, 'image/')) {
+                $messages[] = "Imagen guardada correctamente: {$fileLabel}.";
+            } elseif (Str::startsWith((string) $mediaMime, 'video/')) {
+                $messages[] = "Video guardado correctamente: {$fileLabel}.";
+                $warnings[] = 'Video guardado en modo compatible, sin compresión automática.';
+            } else {
+                $messages[] = "Archivo multimedia guardado correctamente: {$fileLabel}.";
+            }
+        } elseif ($submittedFile) {
+            $warnings[] = 'El pack se guardó, pero no se registró archivo multimedia.';
+        } elseif ($tool->media_path) {
+            $warnings[] = 'No se subió archivo nuevo; se mantiene el multimedia actual.';
+        } else {
+            $warnings[] = 'Pack guardado sin archivo multimedia.';
+        }
+
+        $messages[] = $tool->is_active
+            ? 'Pack publicado correctamente.'
+            : 'Pack guardado como no publicado.';
+
+        return [
+            'status' => implode(' ', $messages),
+            'flash_success' => $messages,
+            'flash_warning' => $warnings,
+            'status_tool_id' => $tool->id,
+        ];
+    }
+
+    private function mediaFlashMessages(Tool $tool, array $mediaData, bool $submittedFile, bool $removed): array
+    {
+        $messages = [];
+        $warnings = [];
+
+        if ($removed) {
+            $messages[] = 'Archivo multimedia eliminado correctamente.';
+        } elseif (($mediaData['media_path'] ?? null) && $submittedFile) {
+            $fileLabel = basename($mediaData['media_original_name'] ?? $mediaData['media_path']);
+            if (Str::startsWith((string) ($mediaData['media_mime'] ?? ''), 'image/')) {
+                $messages[] = "Imagen guardada correctamente: {$fileLabel}.";
+            } elseif (Str::startsWith((string) ($mediaData['media_mime'] ?? ''), 'video/')) {
+                $messages[] = "Video guardado correctamente: {$fileLabel}.";
+                $warnings[] = 'Video guardado en modo compatible, sin compresión automática.';
+            } else {
+                $messages[] = "Archivo multimedia guardado correctamente: {$fileLabel}.";
+            }
+        } elseif (array_key_exists('media_active', $mediaData)) {
+            $messages[] = $tool->media_active
+                ? 'Archivo multimedia activado correctamente.'
+                : 'Archivo multimedia desactivado correctamente.';
+        } else {
+            $warnings[] = 'No se guardó ningún archivo multimedia nuevo.';
+        }
+
+        return [
+            'status' => implode(' ', $messages ?: ['Cambio de media procesado.']),
+            'flash_success' => $messages,
+            'flash_warning' => $warnings,
+            'status_tool_id' => $tool->id,
+        ];
+    }
+
     private function validateTool(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'tag' => ['nullable', 'string', 'max:50'],
             'title' => ['required', 'string', 'max:120'],
             'subtitle' => ['required', 'string', 'max:255'],
@@ -407,10 +761,25 @@ class DashboardController extends Controller
 
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['nullable'],
-            'media' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,image/gif', 'max:8192'],
+            'currency' => ['nullable', Rule::in(['PEN', 'USD'])],
+            'media' => ['nullable', 'file', 'mimetypes:' . implode(',', self::MEDIA_MIMES), 'max:' . self::MEDIA_MAX_KB],
             'media_active' => ['nullable', 'boolean'],
             'media_remove' => ['nullable', 'boolean'],
-        ]);
+        ], $this->mediaValidationMessages());
+
+        $data['media_active'] = $request->boolean('media_active');
+        $data['currency'] = strtoupper($data['currency'] ?? 'PEN');
+
+        return $data;
+    }
+
+    private function mediaValidationMessages(): array
+    {
+        return [
+            'media.mimetypes' => 'Formato no permitido. Usa JPG, PNG, WebP, GIF, MP4 o WebM.',
+            'media.max' => 'El archivo supera 40MB. Comprime el archivo antes de subirlo.',
+            'media.file' => 'El archivo no se pudo leer correctamente. Vuelve a seleccionarlo.',
+        ];
     }
 
     private function normalizeOffValues(array $data, Request $request): array
@@ -513,5 +882,8 @@ class DashboardController extends Controller
         return $rows;
     }
 }
+
+
+
 
 

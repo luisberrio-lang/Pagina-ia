@@ -1,12 +1,11 @@
-@extends('layouts.marketing')
-@section('title', 'FAQ · GVelarde')
+<?php $__env->startSection('title', 'FAQ · GVelarde'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <h2 class="text-3xl font-extrabold">Preguntas frecuentes</h2>
 <p class="text-white/70 mt-2">Respuestas directas.</p>
 
 <div class="mt-8 grid gap-4">
-@foreach([
+<?php $__currentLoopData = [
   [
     'q' => '¿Qué tipo de inteligencias artificiales ofrece la plataforma?',
     'a' => 'La plataforma ofrece acceso a diversas herramientas de inteligencia artificial orientadas a productividad, automatización y creación de contenido, según disponibilidad.'
@@ -31,11 +30,17 @@
     'q' => '¿Cada usuario tiene su propio panel?',
     'a' => 'Sí. Cada cliente dispone de un panel donde puede consultar el estado de su acceso y la información relevante del servicio.'
   ],
-] as $f)
+  [
+    'q' => '¿La plataforma cuenta con soporte?',
+    'a' => 'Se brinda soporte básico para incidencias generales y orientación sobre el uso de la plataforma.'
+  ],
+]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $f): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
   <div class="glass rounded-2xl p-5 card-hover">
-      <p class="font-semibold">{{ $f['q'] }}</p>
-      <p class="text-white/70 mt-2">{{ $f['a'] }}</p>
+      <p class="font-semibold"><?php echo e($f['q']); ?></p>
+      <p class="text-white/70 mt-2"><?php echo e($f['a']); ?></p>
   </div>
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.marketing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\pagina-ia\resources\views/pages/marketing/faq.blade.php ENDPATH**/ ?>

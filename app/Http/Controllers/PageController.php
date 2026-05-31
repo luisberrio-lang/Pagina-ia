@@ -41,11 +41,6 @@ class PageController extends Controller
         );
     }
 
-    public function soporte()
-    {
-        return view('pages.marketing.soporte');
-    }
-
     public function faq()
     {
         return view('pages.marketing.faq');

@@ -72,7 +72,7 @@
                     placeholder="Ej:
 Acceso inmediato
 Entrega organizada
-Soporte básico">{{ old('highlights_text') }}</textarea>
+Orientación básica">{{ old('highlights_text') }}</textarea>
           @error('highlights_text') <p class="text-red-300 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -82,7 +82,7 @@ Soporte básico">{{ old('highlights_text') }}</textarea>
                     placeholder="Ej:
 Herramientas|Acceso completo
 Plantillas|Archivos listos para usar
-Soporte|Orientación básica">{{ old('includes_text') }}</textarea>
+Guía|Orientación básica">{{ old('includes_text') }}</textarea>
           @error('includes_text') <p class="text-red-300 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -254,7 +254,7 @@ Recursos adicionales">{{ old('extras_text') }}</textarea>
                           placeholder="Ej:
 Acceso inmediato
 Entrega organizada
-Soporte básico">{{ old('highlights_text', implode("\n", $tool->highlights ?? [])) }}</textarea>
+Orientación básica">{{ old('highlights_text', implode("\n", $tool->highlights ?? [])) }}</textarea>
               </div>
 
               <div>

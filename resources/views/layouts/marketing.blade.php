@@ -7,8 +7,8 @@
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-  <link rel="icon" href="{{ asset('favicon.ico') }}?v=3">
-  <link rel="icon" type="image/png" href="{{ asset('images/logopng.png') }}?v=3">
+  <link rel="icon" href="{{ asset('favicon.ico') }}?v=4">
+  <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v=4">
 </head>
 
 <body class="min-h-screen bg-[#010014] text-slate-100">
@@ -19,7 +19,7 @@
   <div class="absolute top-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-cyan-400/15 blur-3xl"></div>
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_60%)]"></div>
   <div class="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]"></div>
-  <img src="{{ asset('images/robot-3d.png') }}" alt="Robot 3D" class="hero-robot"/>
+  <img src="{{ asset('images/robot-3d.webp') }}" alt="Robot 3D" class="hero-robot" decoding="async" fetchpriority="low"/>
 </div>
 
 @php
@@ -35,7 +35,7 @@
 
     {{-- LOGO --}}
     <a href="{{ route('inicio') }}" class="flex items-center gap-3 shrink-0">
-      <img src="{{ asset('images/logopagina.jpeg') }}" alt="G Velarde"
+      <img src="{{ asset('images/logopagina.webp') }}" alt="G Velarde"
            class="h-10 w-10 rounded-xl object-cover border border-white/10 bg-white/5">
       <span class="font-bold tracking-wide">
         G<span class="text-cyan-300">Velarde</span>
@@ -76,15 +76,6 @@
         Precios
       </a>
 
-      <a class="nav-item" href="{{ route('soporte') }}">
-        <span class="nav-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 4h16v10a4 4 0 0 1-4 4H9l-5 3v-3a4 4 0 0 1-4-4V4z"/>
-          </svg>
-        </span>
-        Soporte
-      </a>
-
       <a class="nav-item" href="{{ route('faq') }}">
         <span class="nav-ico">
           {{-- ✅ FAQ icon FIX (completo, no recorta) --}}
@@ -104,7 +95,7 @@
       <div class="hidden sm:flex items-center gap-2 mr-1">
         <a href="{{ $waHeaderUrl }}" target="_blank" rel="noopener" aria-label="WhatsApp"
            class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-emerald-400/40 transition">
-          <img src="{{ asset('images/pngegg.png') }}" alt="WhatsApp" class="h-7 w-7 icon-bright">
+          <img src="{{ asset('images/pngegg.webp') }}" alt="WhatsApp" class="h-7 w-7 icon-bright" decoding="async">
         </a>
 
         <a href="{{ $fbUrl }}" target="_blank" rel="noopener" aria-label="Facebook"
@@ -131,7 +122,6 @@
       @auth
         @if(auth()->user()->isAdmin())
           <a class="btn-tech" href="{{ route('admin.dashboard') }}">Dashboard</a>
-          <a class="btn-tech" href="{{ route('admin.tickets') }}">Tickets</a>
         @endif
 
         <form method="POST" action="{{ route('logout') }}">
@@ -155,7 +145,6 @@
       <a class="nav-item w-full" href="{{ route('inicio') }}">Inicio</a>
       <a class="nav-item w-full" href="{{ route('herramientas') }}">Herramientas IA</a>
       <a class="nav-item w-full" href="{{ route('precio') }}">Precios</a>
-      <a class="nav-item w-full" href="{{ route('soporte') }}">Soporte</a>
       <a class="nav-item w-full" href="{{ route('faq') }}">FAQ</a>
 
       <div class="pt-2 flex gap-2">

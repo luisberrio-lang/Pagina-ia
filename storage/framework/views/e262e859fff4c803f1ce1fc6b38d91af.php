@@ -7,8 +7,8 @@
 
   <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
-  <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>?v=3">
-  <link rel="icon" type="image/png" href="<?php echo e(asset('images/logopng.png')); ?>?v=3">
+  <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>?v=4">
+  <link rel="icon" type="image/png" href="<?php echo e(asset('favicon.png')); ?>?v=4">
 </head>
 
 <body class="min-h-screen bg-[#010014] text-slate-100">
@@ -19,7 +19,7 @@
   <div class="absolute top-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-cyan-400/15 blur-3xl"></div>
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.18),transparent_60%)]"></div>
   <div class="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(255,255,255,.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.06)_1px,transparent_1px)] [background-size:44px_44px]"></div>
-  <img src="<?php echo e(asset('images/robot-3d.png')); ?>" alt="Robot 3D" class="hero-robot"/>
+  <img src="<?php echo e(asset('images/robot-3d.webp')); ?>" alt="Robot 3D" class="hero-robot" decoding="async" fetchpriority="low"/>
 </div>
 
 <?php
@@ -35,7 +35,7 @@
 
     
     <a href="<?php echo e(route('inicio')); ?>" class="flex items-center gap-3 shrink-0">
-      <img src="<?php echo e(asset('images/logopagina.jpeg')); ?>" alt="G Velarde"
+      <img src="<?php echo e(asset('images/logopagina.webp')); ?>" alt="G Velarde"
            class="h-10 w-10 rounded-xl object-cover border border-white/10 bg-white/5">
       <span class="font-bold tracking-wide">
         G<span class="text-cyan-300">Velarde</span>
@@ -76,15 +76,6 @@
         Precios
       </a>
 
-      <a class="nav-item" href="<?php echo e(route('soporte')); ?>">
-        <span class="nav-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 4h16v10a4 4 0 0 1-4 4H9l-5 3v-3a4 4 0 0 1-4-4V4z"/>
-          </svg>
-        </span>
-        Soporte
-      </a>
-
       <a class="nav-item" href="<?php echo e(route('faq')); ?>">
         <span class="nav-ico">
           
@@ -104,7 +95,7 @@
       <div class="hidden sm:flex items-center gap-2 mr-1">
         <a href="<?php echo e($waHeaderUrl); ?>" target="_blank" rel="noopener" aria-label="WhatsApp"
            class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-emerald-400/40 transition">
-          <img src="<?php echo e(asset('images/pngegg.png')); ?>" alt="WhatsApp" class="h-7 w-7 icon-bright">
+          <img src="<?php echo e(asset('images/pngegg.webp')); ?>" alt="WhatsApp" class="h-7 w-7 icon-bright" decoding="async">
         </a>
 
         <a href="<?php echo e($fbUrl); ?>" target="_blank" rel="noopener" aria-label="Facebook"
@@ -131,7 +122,6 @@
       <?php if(auth()->guard()->check()): ?>
         <?php if(auth()->user()->isAdmin()): ?>
           <a class="btn-tech" href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a>
-          <a class="btn-tech" href="<?php echo e(route('admin.tickets')); ?>">Tickets</a>
         <?php endif; ?>
 
         <form method="POST" action="<?php echo e(route('logout')); ?>">
@@ -155,7 +145,6 @@
       <a class="nav-item w-full" href="<?php echo e(route('inicio')); ?>">Inicio</a>
       <a class="nav-item w-full" href="<?php echo e(route('herramientas')); ?>">Herramientas IA</a>
       <a class="nav-item w-full" href="<?php echo e(route('precio')); ?>">Precios</a>
-      <a class="nav-item w-full" href="<?php echo e(route('soporte')); ?>">Soporte</a>
       <a class="nav-item w-full" href="<?php echo e(route('faq')); ?>">FAQ</a>
 
       <div class="pt-2 flex gap-2">

@@ -17,7 +17,7 @@ class Tool extends Model
         'price_monthly_old','price_bimestral_old','price_trimestral_old','price_semestral_old','price_anual_old',
         'off_monthly','off_bimestral','off_trimestral','off_semestral','off_anual',
         'off_mensual',
-        'sort_order','is_active',
+        'sort_order','is_active','currency',
         'media_path','media_mime','media_original_name','media_size_bytes','media_active',
     ];
 
@@ -114,5 +114,10 @@ class Tool extends Model
     public function getOffAnualAttribute(): ?int
     {
         return $this->attributes['off_anual'] ?? null;
+    }
+
+    public function getCurrencySymbolAttribute(): string
+    {
+        return ($this->currency ?? 'PEN') === 'USD' ? '$' : 'S/';
     }
 }
